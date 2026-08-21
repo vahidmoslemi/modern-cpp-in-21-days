@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Vahid Moslemi">
+<meta name="robots" content="noindex">
+<meta name="description" content="This chapter of Modern C++ in 21 Days has not been published yet.">
+<title>Coming soon — Modern C++ in 21 Days</title>
+<style>
+:root{
+  --ink:#1c2733;
+  --paper:#fbfbf8;
+  --accent:#0b6e6e;        /* compiler teal */
+  --accent-dark:#084f4f;
+  --rule:#d8d5cc;
+  --code-bg:#0f1720;
+  --code-ink:#e6edf3;
+  --note-bg:#eef4f4;
+  --do-bg:#eaf5ec;   --do-edge:#2f7d43;
+  --dont-bg:#fbeeee; --dont-edge:#b03a3a;
+  --pit-bg:#fdf6e7;  --pit-edge:#b07a1e;
+  --std17:#5b6770; --std20:#0b6e6e; --std23:#7a3fa0;
+  --maxw:46rem;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:Charter,"Bitstream Charter","Iowan Old Style",Georgia,serif;
+  font-size:1.06rem; line-height:1.65;
+}
+main{max-width:var(--maxw); margin:0 auto; padding:0 1.25rem 6rem}
+h1,h2,h3,h4{
+  font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;
+  line-height:1.2; color:var(--ink); font-weight:700;
+}
+h1{font-size:2.2rem; margin:2.5rem 0 .5rem}
+h2{font-size:1.55rem; margin:2.5rem 0 .75rem; border-bottom:2px solid var(--rule); padding-bottom:.3rem}
+h3{font-size:1.2rem; margin:1.8rem 0 .5rem}
+h4{font-size:1.02rem; margin:1.4rem 0 .4rem; text-transform:uppercase; letter-spacing:.05em; color:var(--accent-dark)}
+a{color:var(--accent); text-decoration-thickness:1px}
+a:hover{color:var(--accent-dark)}
+a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+p{margin:.8rem 0}
+ul,ol{padding-left:1.4rem}
+li{margin:.3rem 0}
+code{
+  font-family:"SF Mono",Consolas,"Liberation Mono",Menlo,monospace;
+  font-size:.92em; background:#eceae2; padding:.08em .3em; border-radius:3px;
+}
+pre{
+  background:var(--code-bg); color:var(--code-ink);
+  padding:1rem 1.1rem; border-radius:6px; overflow-x:auto;
+  font-size:.87rem; line-height:1.55; margin:1rem 0;
+}
+pre code{background:none; padding:0; color:inherit; font-size:1em}
+.filename{
+  font-family:"SF Mono",Consolas,monospace; font-size:.78rem;
+  background:#1b2a38; color:#9fc1d8; padding:.3rem .8rem;
+  border-radius:6px 6px 0 0; margin:1rem 0 0; display:inline-block;
+}
+.filename + pre{margin-top:0; border-top-left-radius:0}
+.day-banner{
+  background:var(--accent); color:#fff; border-radius:8px;
+  padding:1.4rem 1.6rem; margin:3rem 0 1.5rem;
+}
+.day-banner .kicker{
+  font-family:"SF Mono",Consolas,monospace; font-size:.8rem;
+  letter-spacing:.18em; text-transform:uppercase; opacity:.85; display:block; margin-bottom:.3rem;
+}
+.day-banner h2{border:none; color:#fff; margin:0; padding:0; font-size:1.7rem}
+.callout{border-left:4px solid var(--accent); background:var(--note-bg);
+  padding:.8rem 1.1rem; margin:1.2rem 0; border-radius:0 6px 6px 0}
+.callout .label{
+  font-family:"Avenir Next","Segoe UI",sans-serif; font-weight:700;
+  font-size:.78rem; letter-spacing:.12em; text-transform:uppercase;
+  display:block; margin-bottom:.25rem;
+}
+.callout.do{background:var(--do-bg); border-color:var(--do-edge)}
+.callout.do .label{color:var(--do-edge)}
+.callout.dont{background:var(--dont-bg); border-color:var(--dont-edge)}
+.callout.dont .label{color:var(--dont-edge)}
+.callout.pitfall{background:var(--pit-bg); border-color:var(--pit-edge)}
+.callout.pitfall .label{color:var(--pit-edge)}
+.callout.cg{background:#eef0f8; border-color:#4a5aa8}
+.callout.cg .label{color:#4a5aa8}
+.callout.cg .rule{
+  font-family:"SF Mono",Consolas,monospace; font-size:.85rem; font-weight:700;
+}
+.callout.cg pre{font-size:.8rem; margin:.6rem 0 .2rem}
+.std{
+  font-family:"SF Mono",Consolas,monospace; font-size:.7rem; font-weight:700;
+  color:#fff; padding:.15em .5em; border-radius:3px; vertical-align:middle;
+  letter-spacing:.05em;
+}
+.std.s17{background:var(--std17)}
+.std.s20{background:var(--std20)}
+.std.s23{background:var(--std23)}
+table{border-collapse:collapse; width:100%; margin:1rem 0; font-size:.95rem}
+th,td{border:1px solid var(--rule); padding:.5rem .7rem; text-align:left; vertical-align:top}
+th{background:#f0eee6; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:.85rem;
+   text-transform:uppercase; letter-spacing:.06em}
+.titlepage{text-align:center; padding:5rem 0 3rem; border-bottom:2px solid var(--rule)}
+.titlepage .series{
+  font-family:"SF Mono",Consolas,monospace; font-size:.85rem; letter-spacing:.25em;
+  text-transform:uppercase; color:var(--accent);
+}
+.titlepage h1{font-size:3rem; margin:.6rem 0 .4rem}
+.titlepage .subtitle{font-size:1.15rem; color:#4a5560; max-width:34rem; margin:0 auto}
+.titlepage .byline{font-family:"Avenir Next","Segoe UI",sans-serif; font-size:1rem;
+  letter-spacing:.08em; color:var(--accent-dark); margin-top:1.6rem}
+.titlepage .byline-links{font-family:"SF Mono",Consolas,monospace; font-size:.78rem;
+  color:#5b6570; margin-top:.35rem}
+.toc ol{counter-reset:day; list-style:none; padding-left:0}
+.toc > ol > li{
+  counter-increment:day; margin:.45rem 0; display:flex; gap:.9rem; align-items:baseline;
+}
+.toc > ol > li::before{
+  content:"Day " counter(day);
+  font-family:"SF Mono",Consolas,monospace; font-size:.75rem; color:var(--accent);
+  min-width:4.2rem; letter-spacing:.05em;
+}
+details{margin:.8rem 0; border:1px solid var(--rule); border-radius:6px; padding:.5rem .9rem; background:#fff}
+summary{cursor:pointer; font-weight:700; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:.95rem}
+.qa dt{font-weight:700; margin-top:.9rem}
+.qa dd{margin:.25rem 0 0 0}
+footer{border-top:2px solid var(--rule); margin-top:4rem; padding-top:1.2rem;
+  font-size:.85rem; color:#5b6570}
+@media print{
+  pre{white-space:pre-wrap; border:1px solid #999; background:#fff; color:#000}
+  .day-banner{background:#fff; color:#000; border:2px solid #000}
+  a{color:#000; text-decoration:none}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* multi-page navigation (added when the single file was split into pages) */
+.page-nav{display:flex;justify-content:space-between;gap:1rem;margin:3.5rem 0 1rem;
+  padding-top:1rem;border-top:2px solid var(--rule);
+  font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;font-size:.95rem}
+.page-nav a{color:var(--accent-dark);text-decoration:none}
+.page-nav a:hover{text-decoration:underline}
+.page-nav .spacer{flex:1}
+</style>
+</head>
+<body>
+<main>
+<section id="under-construction" aria-labelledby="uc-h">
+  <h2 id="uc-h">🚧 This chapter is on the way</h2>
+  <div class="callout">
+    <p><strong>This chapter hasn't been published yet.</strong> <em>Modern C++ in 21 Days</em>
+    is written one day at a time, <em>in order</em> — each day is drafted, compile-tested, and
+    reviewed before it goes live, so the chapters build on each other cleanly.</p>
+    <p>Please check back a little later. In the meantime, you can read the front matter and see
+    the full plan for all twenty-one days on the <a href="index.html">Table&nbsp;of&nbsp;Contents</a>.</p>
+  </div>
+  <p style="margin-top:1.5rem"><a href="index.html">← Back to the Table of Contents</a></p>
+</section>
+<nav class="page-nav"><span></span><a href="index.html">Contents</a><div class="spacer"></div><span></span></nav>
+<footer>
+  <p>Modern C++ in 21 Days · Prose © 2026 Vahid Moslemi, CC BY 4.0 · Code samples MIT licensed · Days 4–21 are appended as they are written.<br><a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days">Source &amp; issues on GitHub</a> · <a href="https://www.linkedin.com/in/vahid-moslemi/">LinkedIn</a></p>
+</footer>
+</main>
+</body>
+</html>

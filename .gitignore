@@ -1,0 +1,15 @@
+# CMake build trees (out-of-tree builds are regenerated)
+implementations/**/build/
+build/
+
+# Editor / OS cruft
+.DS_Store
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# BookForge scratch (reviews are committed; pending manual bridges are not)
+.bookforge/reviews/**/pending/

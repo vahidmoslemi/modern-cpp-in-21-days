@@ -1,0 +1,74 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright (c) 2026 Vahid Moslemi
+
+Applies to all non-code content of this repository: the book text,
+explanations, tables, callouts, structure, styling, and illustrations.
+(Source code is separately licensed under the MIT License — see LICENSE-CODE.)
+
+--------------------------------------------------------------------------
+YOU ARE FREE TO:
+
+  Share  — copy and redistribute the material in any medium or format
+  Adapt  — remix, transform, and build upon the material
+           for any purpose, even commercially.
+
+The licensor cannot revoke these freedoms as long as you follow the
+license terms.
+
+UNDER THE FOLLOWING TERMS:
+
+  Attribution — You must give appropriate credit, provide a link to the
+  license, and indicate if changes were made. You may do so in any
+  reasonable manner, but not in any way that suggests the licensor
+  endorses you or your use.
+
+  No additional restrictions — You may not apply legal terms or
+  technological measures that legally restrict others from doing anything
+  the license permits.
+
+NOTICES:
+
+  You do not have to comply with the license for elements of the material
+  in the public domain or where your use is permitted by an applicable
+  exception or limitation.
+
+  No warranties are given. The license may not give you all of the
+  permissions necessary for your intended use. For example, other rights
+  such as publicity, privacy, or moral rights may limit how you use the
+  material.
+--------------------------------------------------------------------------
+
+The above is a human-readable summary of, and not a substitute for, the
+license. The complete legal text of CC BY 4.0 is available at:
+
+    https://creativecommons.org/licenses/by/4.0/legalcode
+
+The summary page is available at:
+
+    https://creativecommons.org/licenses/by/4.0/
+
+--------------------------------------------------------------------------
+SUGGESTED ATTRIBUTION
+
+When reusing this material, an attribution such as the following is
+sufficient:
+
+    "Modern C++ in 21 Days" by Vahid Moslemi, licensed under CC BY 4.0.
+    Source: https://github.com/vahidmoslemi/modern-cpp-in-21-days
+
+If you modified the material, please say so — for example by adding
+"Adapted from" before the title.
+
+--------------------------------------------------------------------------
+NOT COVERED BY THIS LICENSE
+
+  * Third-party trademarks and product names (GCC, Clang, MSVC, Visual
+    Studio Code, CMake, vcpkg, Conan, GoogleTest, Catch2, GitHub, and
+    others) referenced in the text for identification purposes only.
+
+  * The names and titles of rules quoted from the C++ Core Guidelines,
+    which are cited with links to their original source.
+
+  * Any third-party software described or linked to by this book, each of
+    which carries its own license.

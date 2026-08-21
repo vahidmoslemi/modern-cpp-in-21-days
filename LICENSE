@@ -1,0 +1,21 @@
+# License
+
+*Modern C++ in 21 Days* uses **two licenses**, because prose and code are different kinds of
+work and should be reusable on different terms.
+
+| What | License | Full text |
+|---|---|---|
+| **Prose** — the book text, all HTML pages under `book/`, and this repository's documentation | **CC BY 4.0** | [`LICENSE-PROSE`](LICENSE-PROSE) |
+| **Code** — every code sample, the projects under `implementations/`, and the pipeline under `pipeline/` | **MIT** | [`LICENSE-CODE`](LICENSE-CODE) |
+
+- **Prose (CC BY 4.0):** share and adapt freely, including commercially, with attribution.
+- **Code (MIT):** use freely in any project; keep the copyright and permission notice.
+
+When a file could be considered both, the code license applies to the code and the prose
+license to the surrounding text.
+
+© 2026 Vahid Moslemi. Provided "as is", without warranty of any kind.
+
+This book is written with AI assistance; see [`AI_USAGE.md`](AI_USAGE.md). The licenses are
+offered in good faith to the extent the material is protectable, and nothing here is legal
+advice.

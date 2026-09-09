@@ -60,6 +60,11 @@ pre code{background:none; padding:0; color:inherit; font-size:1em}
   border-radius:6px 6px 0 0; margin:1rem 0 0; display:inline-block;
 }
 .filename + pre{margin-top:0; border-top-left-radius:0}
+.srcref{
+  font-family:"SF Mono",Consolas,monospace; font-size:.76rem;
+  color:#5b6570; margin:-.7rem 0 1.3rem;
+}
+.srcref code{background:none; padding:0; font-size:1em; color:inherit}
 .day-banner{
   background:var(--accent); color:#fff; border-radius:8px;
   padding:1.4rem 1.6rem; margin:3rem 0 1.5rem;
@@ -160,6 +165,8 @@ footer{border-top:2px solid var(--rule); margin-top:4rem; padding-top:1.2rem;
 <span class="std s17">C++17</span> <span class="std s20">C++20</span> <span class="std s23">C++23</span>.
 When no badge appears, the feature is available in C++17 or earlier. Portability notes call out where GCC, Clang, and MSVC differ.</p>
 <p><strong>Type the code.</strong> Reading C++ is not learning C++. Every example compiles; the build command or <code>CMakeLists.txt</code> is always given. When an exercise stumps you, struggle for fifteen minutes before opening the solution — that struggle is where the learning happens.</p>
+
+<p><strong>Every complete program is also in the repository.</strong> Under each listing you will see a line like <span class="srcref">In the repo: <code>implementations/day01/07-daysleft/</code></span> — that folder is a ready-to-build CMake project containing exactly the code on the page, plus the output it should produce. Folders are numbered in the order the programs appear in the chapter. Type the code yourself first; the folder is there to compare against when something doesn't work, and to save you retyping the longer projects. Every one of them is compiled and run before the chapter is published, at <code>-Wall -Wextra -Werror</code>, so a warning is a failure.</p>
 </section>
 <nav class="page-nav"><a href="preface.html">← Preface</a><a href="index.html">Contents</a><div class="spacer"></div><a href="prerequisites.html">Prerequisites →</a></nav>
 <footer>

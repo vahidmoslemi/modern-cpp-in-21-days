@@ -50,7 +50,7 @@ new chapters.
 
 | Day | Chapter | Status |
 |---|---|---|
-| 1 | Toolchain — Compilers, VSCode, CMake | ✍️ Written · in review & test (not yet published) |
+| 1 | Toolchain — Compilers, VSCode, CMake | ✅ Published |
 | 2 | Core Fundamentals — Types, `auto`, `const`, References | ✍️ Written · in review & test (not yet published) |
 | 3 | Functions, Overloading, Lambdas, `constexpr` | ✍️ Written · in review & test (not yet published) |
 | 4 | Memory and Ownership — RAII, Smart Pointers, Move | 📋 Planned (next) |

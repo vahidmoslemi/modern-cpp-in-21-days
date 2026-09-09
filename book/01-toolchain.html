@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Vahid Moslemi">
+<meta name="description" content="Modern C++ in 21 Days — a free, self-teaching book covering C++17/20/23, CMake, VSCode, testing, concurrency, and SDK design.">
+<title>Day 1 — Your Professional Toolchain — Compilers, VSCode, and CMake — Modern C++ in 21 Days</title>
+<style>
+:root{
+  --ink:#1c2733;
+  --paper:#fbfbf8;
+  --accent:#0b6e6e;        /* compiler teal */
+  --accent-dark:#084f4f;
+  --rule:#d8d5cc;
+  --code-bg:#0f1720;
+  --code-ink:#e6edf3;
+  --note-bg:#eef4f4;
+  --do-bg:#eaf5ec;   --do-edge:#2f7d43;
+  --dont-bg:#fbeeee; --dont-edge:#b03a3a;
+  --pit-bg:#fdf6e7;  --pit-edge:#b07a1e;
+  --std17:#5b6770; --std20:#0b6e6e; --std23:#7a3fa0;
+  --maxw:46rem;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:Charter,"Bitstream Charter","Iowan Old Style",Georgia,serif;
+  font-size:1.06rem; line-height:1.65;
+}
+main{max-width:var(--maxw); margin:0 auto; padding:0 1.25rem 6rem}
+h1,h2,h3,h4{
+  font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;
+  line-height:1.2; color:var(--ink); font-weight:700;
+}
+h1{font-size:2.2rem; margin:2.5rem 0 .5rem}
+h2{font-size:1.55rem; margin:2.5rem 0 .75rem; border-bottom:2px solid var(--rule); padding-bottom:.3rem}
+h3{font-size:1.2rem; margin:1.8rem 0 .5rem}
+h4{font-size:1.02rem; margin:1.4rem 0 .4rem; text-transform:uppercase; letter-spacing:.05em; color:var(--accent-dark)}
+a{color:var(--accent); text-decoration-thickness:1px}
+a:hover{color:var(--accent-dark)}
+a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+p{margin:.8rem 0}
+ul,ol{padding-left:1.4rem}
+li{margin:.3rem 0}
+code{
+  font-family:"SF Mono",Consolas,"Liberation Mono",Menlo,monospace;
+  font-size:.92em; background:#eceae2; padding:.08em .3em; border-radius:3px;
+}
+pre{
+  background:var(--code-bg); color:var(--code-ink);
+  padding:1rem 1.1rem; border-radius:6px; overflow-x:auto;
+  font-size:.87rem; line-height:1.55; margin:1rem 0;
+}
+pre code{background:none; padding:0; color:inherit; font-size:1em}
+.filename{
+  font-family:"SF Mono",Consolas,monospace; font-size:.78rem;
+  background:#1b2a38; color:#9fc1d8; padding:.3rem .8rem;
+  border-radius:6px 6px 0 0; margin:1rem 0 0; display:inline-block;
+}
+.filename + pre{margin-top:0; border-top-left-radius:0}
+.srcref{
+  font-family:"SF Mono",Consolas,monospace; font-size:.76rem;
+  color:#5b6570; margin:-.7rem 0 1.3rem;
+}
+.srcref code{background:none; padding:0; font-size:1em; color:inherit}
+.day-banner{
+  background:var(--accent); color:#fff; border-radius:8px;
+  padding:1.4rem 1.6rem; margin:3rem 0 1.5rem;
+}
+.day-banner .kicker{
+  font-family:"SF Mono",Consolas,monospace; font-size:.8rem;
+  letter-spacing:.18em; text-transform:uppercase; opacity:.85; display:block; margin-bottom:.3rem;
+}
+.day-banner h2{border:none; color:#fff; margin:0; padding:0; font-size:1.7rem}
+.callout{border-left:4px solid var(--accent); background:var(--note-bg);
+  padding:.8rem 1.1rem; margin:1.2rem 0; border-radius:0 6px 6px 0}
+.callout .label{
+  font-family:"Avenir Next","Segoe UI",sans-serif; font-weight:700;
+  font-size:.78rem; letter-spacing:.12em; text-transform:uppercase;
+  display:block; margin-bottom:.25rem;
+}
+.callout.do{background:var(--do-bg); border-color:var(--do-edge)}
+.callout.do .label{color:var(--do-edge)}
+.callout.dont{background:var(--dont-bg); border-color:var(--dont-edge)}
+.callout.dont .label{color:var(--dont-edge)}
+.callout.pitfall{background:var(--pit-bg); border-color:var(--pit-edge)}
+.callout.pitfall .label{color:var(--pit-edge)}
+.callout.cg{background:#eef0f8; border-color:#4a5aa8}
+.callout.cg .label{color:#4a5aa8}
+.callout.cg .rule{
+  font-family:"SF Mono",Consolas,monospace; font-size:.85rem; font-weight:700;
+}
+.callout.cg pre{font-size:.8rem; margin:.6rem 0 .2rem}
+.std{
+  font-family:"SF Mono",Consolas,monospace; font-size:.7rem; font-weight:700;
+  color:#fff; padding:.15em .5em; border-radius:3px; vertical-align:middle;
+  letter-spacing:.05em;
+}
+.std.s17{background:var(--std17)}
+.std.s20{background:var(--std20)}
+.std.s23{background:var(--std23)}
+table{border-collapse:collapse; width:100%; margin:1rem 0; font-size:.95rem}
+th,td{border:1px solid var(--rule); padding:.5rem .7rem; text-align:left; vertical-align:top}
+th{background:#f0eee6; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:.85rem;
+   text-transform:uppercase; letter-spacing:.06em}
+.titlepage{text-align:center; padding:5rem 0 3rem; border-bottom:2px solid var(--rule)}
+.titlepage .series{
+  font-family:"SF Mono",Consolas,monospace; font-size:.85rem; letter-spacing:.25em;
+  text-transform:uppercase; color:var(--accent);
+}
+.titlepage h1{font-size:3rem; margin:.6rem 0 .4rem}
+.titlepage .subtitle{font-size:1.15rem; color:#4a5560; max-width:34rem; margin:0 auto}
+.titlepage .byline{font-family:"Avenir Next","Segoe UI",sans-serif; font-size:1rem;
+  letter-spacing:.08em; color:var(--accent-dark); margin-top:1.6rem}
+.titlepage .byline-links{font-family:"SF Mono",Consolas,monospace; font-size:.78rem;
+  color:#5b6570; margin-top:.35rem}
+.toc ol{counter-reset:day; list-style:none; padding-left:0}
+.toc > ol > li{
+  counter-increment:day; margin:.45rem 0; display:flex; gap:.9rem; align-items:baseline;
+}
+.toc > ol > li::before{
+  content:"Day " counter(day);
+  font-family:"SF Mono",Consolas,monospace; font-size:.75rem; color:var(--accent);
+  min-width:4.2rem; letter-spacing:.05em;
+}
+details{margin:.8rem 0; border:1px solid var(--rule); border-radius:6px; padding:.5rem .9rem; background:#fff}
+summary{cursor:pointer; font-weight:700; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:.95rem}
+.qa dt{font-weight:700; margin-top:.9rem}
+.qa dd{margin:.25rem 0 0 0}
+footer{border-top:2px solid var(--rule); margin-top:4rem; padding-top:1.2rem;
+  font-size:.85rem; color:#5b6570}
+@media print{
+  pre{white-space:pre-wrap; border:1px solid #999; background:#fff; color:#000}
+  .day-banner{background:#fff; color:#000; border:2px solid #000}
+  a{color:#000; text-decoration:none}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* multi-page navigation (added when the single file was split into pages) */
+.page-nav{display:flex;justify-content:space-between;gap:1rem;margin:3.5rem 0 1rem;
+  padding-top:1rem;border-top:2px solid var(--rule);
+  font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;font-size:.95rem}
+.page-nav a{color:var(--accent-dark);text-decoration:none}
+.page-nav a:hover{text-decoration:underline}
+.page-nav .spacer{flex:1}
+</style>
+</head>
+<body>
+<main>
+<section id="day1" aria-labelledby="day1-h">
+<div class="day-banner">
+  <span class="kicker">Day 1 of 21</span>
+  <h2 id="day1-h">Your Professional Toolchain — Compilers, VSCode, and CMake</h2>
+</div>
+
+<h3>Today You Will Learn</h3>
+<ul>
+  <li>How the C++ toolchain works: preprocessor → compiler → linker → executable.</li>
+  <li>How to install a modern compiler on Linux, macOS, and Windows.</li>
+  <li>How to set up Visual Studio Code for professional C++ work.</li>
+  <li>How to write, compile, and run your first modern C++ program by hand.</li>
+  <li>How to build the same program with CMake — the industry-standard build system.</li>
+  <li>How to set a breakpoint and step through code in the VSCode debugger.</li>
+</ul>
+
+<h3>1.1 What Actually Happens When You "Compile"</h3>
+<p>In interpreted languages, your source code <em>is</em> the program. In C++, your source code is a <em>recipe</em>, and the compiler is a chef that turns it into a native executable — raw machine instructions your CPU runs directly, with no interpreter or virtual machine in between. That directness is where C++'s speed comes from, and it is why C++ powers game engines, browsers, databases, trading systems, and the SDKs you'll learn to build in this book.</p>
+<p>The recipe passes through four stages:</p>
+<ol>
+  <li><strong>Preprocessing.</strong> Lines beginning with <code>#</code> (like <code>#include</code>) are textually processed. <code>#include &lt;iostream&gt;</code> literally pastes the I/O library's declarations into your file.</li>
+  <li><strong>Compilation.</strong> Each source file (<code>.cpp</code>) is translated, independently, into an <em>object file</em> (<code>.o</code> / <code>.obj</code>) of machine code with unresolved references ("I call a function named <code>print_report</code>; someone else defines it").</li>
+  <li><strong>Linking.</strong> The linker stitches all object files and libraries together, resolving those references, and produces the final executable (or library).</li>
+  <li><strong>Running.</strong> The OS loads the executable and jumps to <code>main()</code>.</li>
+</ol>
+<div class="callout">
+  <span class="label">Note</span>
+  Keep this pipeline in mind all book long. Many confusing C++ errors make sense once you know <em>which stage</em> produced them: an <code>undefined reference</code> is a <em>linker</em> error (a definition is missing), while <code>expected ';'</code> is a <em>compiler</em> error (your syntax is off).
+</div>
+
+<h3>1.2 The Three Compilers That Matter</h3>
+<p>Professional C++ means writing code that builds on all three mainstream compilers:</p>
+<table>
+<caption style="text-align:left;font-size:.85rem;color:#5b6570;margin-bottom:.3rem">The mainstream C++ compilers (all free)</caption>
+<tr><th>Compiler</th><th>Home platform</th><th>Command</th><th>Notes</th></tr>
+<tr><td>GCC</td><td>Linux (everywhere, really)</td><td><code>g++</code></td><td>The GNU compiler; default on most Linux distributions.</td></tr>
+<tr><td>Clang</td><td>macOS (via Apple), Linux, Windows</td><td><code>clang++</code></td><td>Famous for clear error messages; powers Apple's Xcode tools.</td></tr>
+<tr><td>MSVC</td><td>Windows</td><td><code>cl</code></td><td>Microsoft's compiler, installed with Visual Studio Build Tools.</td></tr>
+</table>
+<p>They implement the same ISO standards but at slightly different paces, and a few flags differ (for example, GCC/Clang use <code>-std=c++23</code>, while MSVC has no <code>/std:c++23</code> switch yet and you ask for the same thing with <code>/std:c++latest</code>). This book flags the differences whenever they bite. This book compiles everything at C++23, so prefer the newest compiler you can get: GCC 13+, Clang 17+ (on macOS that means Apple clang 16, which ships with Xcode 16), or MSVC from Visual Studio 2022 17.13+ handle everything in these pages. None of the three implements every C++23 feature yet, and they finish at different times — when you need to know whether your compiler has a specific feature, check the <a href="https://en.cppreference.com/w/cpp/compiler_support">compiler support table</a> linked again at the end of today.</p>
+
+<h3>1.3 Install Your Toolchain</h3>
+<p>Pick your operating system and follow along. You'll install three things: a <strong>compiler</strong>, <strong>CMake</strong>, and <strong>Git</strong>.</p>
+
+<h4>Linux — Ubuntu / Debian</h4>
+<pre><code class="language-bash">sudo apt update
+sudo apt install build-essential gdb cmake git
+g++ --version      # expect GCC 13 or newer on Ubuntu 24.04+
+cmake --version    # expect 3.25 or newer</code></pre>
+<p><code>build-essential</code> is a meta-package that pulls in GCC, <code>g++</code>, <code>make</code>, and the C library headers in one go. If your distribution ships an older CMake than 3.25, install the current release from <a href="https://cmake.org/download/">cmake.org/download</a> or via <code>sudo snap install cmake --classic</code>.</p>
+
+<h4>Linux — Fedora / RHEL-family</h4>
+<pre><code class="language-bash">sudo dnf install gcc-c++ gdb cmake git
+g++ --version      # expect GCC 14 or newer on Fedora 40+
+cmake --version    # expect 3.27 or newer</code></pre>
+<p>Fedora also offers a one-shot developer group: <code>sudo dnf group install c-development</code> installs the compiler toolchain plus common build tools. To try Clang alongside GCC on either distribution: <code>sudo apt install clang</code> (Ubuntu) or <code>sudo dnf install clang</code> (Fedora).</p>
+<div class="callout">
+  <span class="label">Note</span>
+  Everything after installation is identical across distributions: the commands in this book (<code>g++</code>, <code>cmake</code>, <code>gdb</code>) behave the same on Ubuntu and Fedora. Only the package-manager step (<code>apt</code> vs <code>dnf</code>) and package names differ, and this book shows both wherever they diverge. On Arch: <code>sudo pacman -S base-devel gdb cmake git</code>.
+</div>
+
+<h4>macOS</h4>
+<pre><code class="language-bash">xcode-select --install          # installs Apple Clang + system headers
+# Install Homebrew from https://brew.sh if you don't have it, then:
+brew install cmake git
+clang++ --version               # expect Apple clang 16 or newer (Xcode 16+)
+cmake --version</code></pre>
+
+<h4>Windows</h4>
+<ol>
+  <li>Download <strong>Build Tools for Visual Studio 2022</strong> from <a href="https://visualstudio.microsoft.com/downloads/">visualstudio.microsoft.com/downloads</a> (scroll to "Tools for Visual Studio").</li>
+  <li>In the installer, check the <strong>"Desktop development with C++"</strong> workload. This installs MSVC, the Windows SDK, and CMake.</li>
+  <li>Install Git from <a href="https://git-scm.com">git-scm.com</a>.</li>
+  <li>To compile from a terminal, open the <strong>"Developer Command Prompt for VS 2022"</strong> (or "Developer PowerShell") from the Start menu — the plain terminal won't find <code>cl</code>.</li>
+</ol>
+<pre><code class="language-bash">cl            # from a Developer prompt; prints the MSVC version banner
+cmake --version</code></pre>
+<div class="callout pitfall">
+  <span class="label">Common Pitfall</span>
+  On Windows, running <code>cl</code> in a normal terminal gives <em>"'cl' is not recognized"</em>. MSVC needs environment variables that only the <em>Developer</em> Command Prompt sets. VSCode's CMake integration handles this for you later, but for hand compilation, always use the Developer prompt.
+</div>
+
+<h3>1.4 Set Up Visual Studio Code</h3>
+<p>Install VSCode from <a href="https://code.visualstudio.com">code.visualstudio.com</a>, then add two extensions (Extensions panel, <code>Ctrl+Shift+X</code> / <code>Cmd+Shift+X</code>):</p>
+<ul>
+  <li><strong>C/C++ Extension Pack</strong> (Microsoft) — IntelliSense (code completion), go-to-definition, and debugging support.</li>
+  <li><strong>CMake Tools</strong> (Microsoft) — configure, build, run, and debug CMake projects from inside the editor. (Included in the pack above; verify it's there.)</li>
+</ul>
+<p>Three features you'll use constantly:</p>
+<ul>
+  <li><strong>IntelliSense</strong>: type <code>std::</code> and a completion list appears. Hover any name to see its type and documentation.</li>
+  <li><strong>Command Palette</strong> (<code>Ctrl+Shift+P</code> / <code>Cmd+Shift+P</code>): every command in VSCode lives here. Type "CMake" to see what CMake Tools can do.</li>
+  <li><strong>Integrated terminal</strong> (<code>Ctrl+`</code>): a real shell inside the editor.</li>
+</ul>
+
+<h3>1.5 Your First Program — By Hand First</h3>
+<p>Before automating anything, compile one program manually so the pipeline from §1.1 is real to you. Create a folder <code>day01</code> and inside it this file:</p>
+<span class="filename">hello.cpp</span>
+<pre><code class="language-cpp">// hello.cpp — first contact with modern C++ (built at C++23)
+#include &lt;iostream&gt;   // stream I/O: std::cout
+#include &lt;string&gt;     // std::string
+
+int main() {
+    std::string who = "professional C++";
+    std::cout &lt;&lt; "Hello, " &lt;&lt; who &lt;&lt; "!\n";
+    return 0;   // 0 = success; the OS sees this exit code
+}</code></pre>
+<p class="srcref">In the repo: <code>implementations/day01/01-hello/</code></p>
+<p>Line by line:</p>
+<ul>
+  <li><code>#include &lt;iostream&gt;</code> — pulls in declarations for the standard output stream <code>std::cout</code>. Angle brackets mean "a standard/system header."</li>
+  <li><code>int main()</code> — the entry point. Every C++ program has exactly one.</li>
+  <li><code>std::string who = ...</code> — a real string type that manages its own memory. <code>std::</code> is the namespace of the standard library; you will write it thousands of times, and that's fine.</li>
+  <li><code>std::cout &lt;&lt; ...</code> — the <code>&lt;&lt;</code> operator sends values to the output stream, chained left to right.</li>
+  <li><code>"\n"</code> — a newline. (You may see <code>std::endl</code> elsewhere; it also flushes the stream, which is usually unnecessary and slower. Prefer <code>"\n"</code>.)</li>
+</ul>
+<p>Compile and run it:</p>
+<pre><code class="language-bash"># Linux / macOS (use clang++ on macOS, g++ on Linux — same flags; see the note below)
+g++ -std=c++23 -Wall -Wextra -Werror -o hello hello.cpp
+./hello
+
+# Windows (Developer Command Prompt)
+cl /std:c++latest /W4 /WX /EHsc hello.cpp
+hello.exe</code></pre>
+<p>Expected output:</p>
+<pre><code>Hello, professional C++!</code></pre>
+<p>Those flags are not optional decoration — they are professional habit:</p>
+<ul>
+  <li><code>-std=c++23</code> / <code>/std:c++latest</code> — select the language standard. Compilers default to older standards; always be explicit.</li>
+  <li><code>-Wall -Wextra</code> / <code>/W4</code> — turn on warnings. A warning is the compiler telling you about a probable bug for free.</li>
+  <li><code>-Werror</code> / <code>/WX</code> — turn every warning into an error, so the build stops instead of scrolling past it. This is the habit that separates code you can trust from code that merely runs: a warning you can ignore is a warning you will ignore. Every sample in this book is built this way, and Day 20 puts the same setting in CI.</li>
+  <li><code>/EHsc</code> — enables standard C++ exception handling on MSVC (GCC/Clang enable it by default).</li>
+</ul>
+<div class="callout">
+  <span class="label">Note</span>
+  <p>Asking for C++23 is the one flag the three compilers still spell differently, and both odd spellings bite on the very first program.</p>
+  <ul>
+    <li><strong>Windows.</strong> There is no <code>/std:c++23</code> — Microsoft will add it when its C++23 support is finished, and until then <code>/std:c++latest</code> is how you get C++23. (Visual Studio 2022 17.13 and later also take <code>/std:c++23preview</code>, which turns on C++23 and nothing experimental.) Watch out: an unknown <code>/std:</code> value is not an error. <code>cl</code> prints <em>"warning D9002: ignoring unknown option"</em> and then builds at its default, C++14 — so a typo here gives you a program that runs and a standard you didn't ask for.</li>
+    <li><strong>macOS.</strong> Apple clang 15 and earlier only know the older spelling <code>-std=c++2b</code> and reject <code>-std=c++23</code>. Apple's version numbers don't track upstream LLVM's, so check with <code>clang++ --version</code>: from Apple clang 16 (Xcode 16) on, <code>-std=c++23</code> works.</li>
+  </ul>
+  <p>The CMake projects from §1.6 onward duck both problems: <code>set(CMAKE_CXX_STANDARD 23)</code> asks for the standard by name and lets CMake pass whichever flag your compiler understands.</p>
+</div>
+<div class="callout do">
+  <span class="label">Do</span>
+  Always compile with <code>-Wall -Wextra -Werror</code> (GCC/Clang) or <code>/W4 /WX</code> (MSVC), and always pin the standard with <code>-std=</code>/<code>/std:</code>. Fix every warning — you no longer have the option of skipping one.
+</div>
+<div class="callout pitfall">
+  <span class="label">Common Pitfall</span>
+  <code>-Werror</code> will stop a build over something small — an unused variable you added while debugging, a comparison between a signed and an unsigned number. That is the point: each of those is a real defect waiting for a bad input. Fix the cause rather than deleting the flag. When you later build somebody else's code that was never warning-clean, leave <code>-Werror</code> off for <em>their</em> targets, not for yours.
+</div>
+<div class="callout dont">
+  <span class="label">Don't</span>
+  Don't put <code>using namespace std;</code> at file scope in headers or serious code. It dumps thousands of names into your scope and causes surprising collisions. Writing <code>std::</code> is the professional norm.
+</div>
+<div class="callout cg">
+  <span class="label">Core Guideline</span>
+  <span class="rule"><a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rs-using-directive">SF.7: Don't write <code>using namespace</code> at global scope in a header file</a></span>
+  <p>In plain words: a header is pasted into every file that includes it, so a <code>using namespace</code> there force-feeds thousands of names to every user of your library — and they can't undo it. Imagine two toolboxes that each contain a hammer:</p>
+<pre><code class="language-cpp">// my_sdk.h — BAD: now EVERY user of your SDK has all std names loose
+using namespace std;
+void print(const string&amp; s);   // whose 'string'? works today, collides tomorrow
+
+// my_sdk.h — GOOD: say which toolbox each tool comes from
+void print(const std::string&amp; s);</code></pre>
+  <p>If a user also has their own <code>string</code> type (game engines and old codebases do), the bad header makes their code stop compiling — and it's your library's fault.</p>
+</div>
+
+<h3>1.6 Enter CMake — Building Like a Professional</h3>
+<p>Hand-compiling works for one file. Real projects have hundreds of files, libraries, tests, and three platforms to support. <strong>CMake</strong> is the de-facto standard tool for describing <em>what</em> to build; it then generates the platform-native build system (Makefiles, Ninja files, or Visual Studio projects) that does the building. One <code>CMakeLists.txt</code>, every platform.</p>
+<p>Recreate the hello project the CMake way. Folder layout:</p>
+<pre><code>day01-cmake/
+├── CMakeLists.txt
+└── src/
+    └── main.cpp</code></pre>
+<span class="filename">src/main.cpp</span>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+int main() {
+    std::cout &lt;&lt; "Built with CMake on every platform.\n";
+}</code></pre>
+<span class="filename">CMakeLists.txt</span>
+<pre><code class="language-cmake"># Minimum CMake version — 3.25 is a safe modern floor.
+cmake_minimum_required(VERSION 3.25)
+
+# Project name, version, and language.
+project(hello_cmake VERSION 0.1.0 LANGUAGES CXX)
+
+# Require C++23, portably, with no compiler-specific extensions.
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# A target: one executable named `hello`, built from one source file.
+add_executable(hello src/main.cpp)
+
+# Warnings, as errors, per compiler. (Generator expressions — explained on Day 18.)
+target_compile_options(hello PRIVATE
+  $&lt;$&lt;CXX_COMPILER_ID:MSVC&gt;:/W4;/WX&gt;
+  $&lt;$&lt;NOT:$&lt;CXX_COMPILER_ID:MSVC&gt;&gt;:-Wall;-Wextra;-Werror&gt;
+)</code></pre>
+<p class="srcref">In the repo: <code>implementations/day01/02-hello-cmake/</code></p>
+<p>The key mental model: modern CMake is about <strong>targets</strong>. <code>add_executable</code> creates a target; <code>target_compile_options</code> (and friends like <code>target_link_libraries</code>) attach properties <em>to that target</em>. We will build on this model all the way to Day 19's SDK.</p>
+<p>Configure and build — the same commands on all three platforms, with one Windows caveat: run them in the Developer Command Prompt, because the CMake installed by the "Desktop development with C++" workload is only on the PATH there:</p>
+<pre><code class="language-bash">cd day01-cmake
+cmake -S . -B build        # -S source dir, -B build dir: configure
+cmake --build build        # compile + link
+./build/hello              # Windows: .\build\Debug\hello.exe</code></pre>
+<p>Expected output:</p>
+<pre><code>Built with CMake on every platform.</code></pre>
+<div class="callout">
+  <span class="label">Note</span>
+  The <code>build/</code> directory holds everything generated. This is an <em>out-of-source build</em>: your sources stay pristine, and cleaning up means deleting one folder. Add <code>build/</code> to your <code>.gitignore</code> from day one.
+</div>
+<div class="callout pitfall">
+  <span class="label">Common Pitfall</span>
+  Editing <code>CMakeLists.txt</code> and wondering why nothing changed? You usually don't need to reconfigure — <code>cmake --build build</code> re-runs CMake when the file changed. But if the build directory gets into a weird state (e.g., after switching compilers), the reliable fix is: delete <code>build/</code> and configure again.
+</div>
+
+<h3>1.7 Open It in VSCode and Debug</h3>
+<p>Now connect the pieces. Open the folder: <code>code day01-cmake</code> (or File → Open Folder). CMake Tools will detect <code>CMakeLists.txt</code> and ask you to pick a <strong>kit</strong> — that's a compiler. Choose GCC/Clang/MSVC as appropriate. Then, in the status bar at the bottom:</p>
+<ul>
+  <li><strong>Build</strong> button — runs the configure + build steps for you.</li>
+  <li><strong>▶ (Run)</strong> — builds and runs the target.</li>
+  <li><strong>🐞 (Debug)</strong> — builds and runs under the debugger.</li>
+</ul>
+<p>To see the debugger earn its keep, replace <code>src/main.cpp</code> with a program that has actual state to inspect:</p>
+<span class="filename">src/main.cpp</span>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+// Sum only the even numbers in a list.
+int sum_of_evens(const std::vector&lt;int&gt;&amp; values) {
+    int total = 0;
+    for (int v : values) {          // range-based for: visits each element
+        if (v % 2 == 0) {
+            total += v;             // ← set a breakpoint here
+        }
+    }
+    return total;
+}
+
+int main() {
+    std::vector&lt;int&gt; data{3, 8, 15, 4, 7, 10};
+    std::cout &lt;&lt; "Sum of evens: " &lt;&lt; sum_of_evens(data) &lt;&lt; "\n";
+}</code></pre>
+<p class="srcref">In the repo: <code>implementations/day01/03-sum-of-evens/</code></p>
+<p>Expected output: <code>Sum of evens: 22</code>.</p>
+<p>Click in the gutter left of the <code>total += v;</code> line to set a red breakpoint dot, then press the 🐞 button. Execution stops at the breakpoint and you can:</p>
+<ul>
+  <li>Hover <code>v</code> and <code>total</code> to see their current values, or watch them in the <strong>Variables</strong> panel.</li>
+  <li><strong>Step Over</strong> (F10) — execute one line.</li>
+  <li><strong>Continue</strong> (F5) — run to the next breakpoint hit. Watch <code>total</code> go 8 → 12 → 22.</li>
+  <li>Inspect the <strong>Call Stack</strong> to see that you're inside <code>sum_of_evens</code>, called from <code>main</code>.</li>
+</ul>
+<div class="callout do">
+  <span class="label">Do</span>
+  Reach for the debugger before sprinkling <code>std::cout</code> everywhere. Stepping through code with live variable inspection finds bugs faster and teaches you how your program actually behaves.
+</div>
+
+<h3>1.8 A Glimpse of "Modern" — Why This Book Exists</h3>
+<p>To close the day, here is one task solved twice: once the way C++98 was written, and once in the style this book teaches. The task: <em>given a list of names, print each name with its length, longest name first.</em> Don't worry about understanding every token yet — compare the shapes.</p>
+<p>First, the C++98 way. This is not the caricature you may be expecting: the standard library already had <code>std::vector</code>, <code>std::string</code>, and <code>std::sort</code>, and this code uses all three. What it lacked was a way to say things briefly.</p>
+<span class="filename">glimpse_old.cpp</span>
+<pre><code class="language-cpp">// C++98 style. Correct, and more capable than its reputation — but wordy.
+#include &lt;algorithm&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+// The sorting rule needs a name and a home, far from the call that uses it,
+// because C++98 had no way to write a small function on the spot.
+bool longer_first(const std::string&amp; a, const std::string&amp; b) {
+    return a.size() &gt; b.size();
+}
+
+int main() {
+    std::vector&lt;std::string&gt; names;
+    names.push_back("Ada");          // one call per element
+    names.push_back("Grace");
+    names.push_back("Bjarne");
+    names.push_back("Margaret");
+
+    std::sort(names.begin(), names.end(), longer_first);
+
+    // Spell out the iterator type the compiler already knows.
+    for (std::vector&lt;std::string&gt;::const_iterator it = names.begin();
+         it != names.end(); ++it) {
+        std::cout &lt;&lt; *it &lt;&lt; " (" &lt;&lt; it-&gt;size() &lt;&lt; ")\n";
+    }
+}</code></pre>
+<p class="srcref">In the repo: <code>implementations/day01/04-glimpse-old/</code></p>
+<p>Nothing here is broken. The vector manages its own memory, the strings know their own lengths, and <code>std::sort</code> does the sorting — that is why C++98 was a real step forward. What it costs you is <em>ceremony</em>: the comparison rule sits in a function far from the one line that cares about it, the loop names a type the compiler could have worked out, and every name added is another <code>push_back</code>. Read the loop header again and notice how much of it is machinery rather than meaning.</p>
+<p>Now the same task, modern style:</p>
+<span class="filename">glimpse_modern.cpp</span>
+<pre><code class="language-cpp">#include &lt;algorithm&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+int main() {
+    std::vector&lt;std::string&gt; names{"Ada", "Grace", "Bjarne", "Margaret"};
+
+    // Algorithm + lambda instead of a hand-written sorting loop.
+    std::sort(names.begin(), names.end(),
+              [](const std::string&amp; a, const std::string&amp; b) {
+                  return a.size() &gt; b.size();   // longest first
+              });
+
+    for (const auto&amp; name : names) {            // range-for, no index bugs
+        std::cout &lt;&lt; name &lt;&lt; " (" &lt;&lt; name.size() &lt;&lt; ")\n";
+    }
+}</code></pre>
+<p class="srcref">In the repo: <code>implementations/day01/05-glimpse-modern/</code></p>
+<p>Both programs print exactly the same thing:</p>
+<pre><code>Margaret (8)
+Bjarne (6)
+Grace (5)
+Ada (3)</code></pre>
+<p>Same library, same result, half the machinery. The sorting rule now sits <em>inside</em> the call that uses it, so you read what the sort does and why in one place. <code>auto</code> and the range-based <code>for</code> retire the iterator boilerplate, and brace initialization fills the vector in one line instead of four. Your code states <em>intent</em> — "sort by this rule" — where the older version spent its lines on mechanics. Add a fifth name and the rest of the program needs no edit. That gap between the two listings is the theme of the next twenty days.</p>
+
+<h3>Workshop</h3>
+
+<h4>Q&amp;A</h4>
+<dl class="qa">
+  <dt>Q: Should I learn C first?</dt>
+  <dd>A: No. Modern C++ is best learned on its own terms. C habits (raw arrays, <code>malloc</code>, <code>char*</code> strings) are precisely what modern C++ replaces.</dd>
+  <dt>Q: Which compiler should I standardize on?</dt>
+  <dd>A: Use your platform's native one day to day (GCC on Linux, Apple Clang on macOS, MSVC on Windows) and let CI build with all of them (Day 20). Code that compiles cleanly on all three is code you can trust.</dd>
+  <dt>Q: Why CMake instead of VSCode tasks or an IDE project?</dt>
+  <dd>A: CMake is toolchain- and editor-neutral: the same <code>CMakeLists.txt</code> drives VSCode, Visual Studio, CLion, plain terminals, and CI servers. Nearly every C++ library you'll depend on ships CMake support.</dd>
+  <dt>Q: Is <code>return 0;</code> required in <code>main</code>?</dt>
+  <dd>A: <code>main</code> is special: if control reaches its end without a <code>return</code>, the effect is <code>return 0;</code>. Many professionals omit it; either style is fine.</dd>
+</dl>
+
+<h4>Quiz</h4>
+<ol>
+  <li>Which toolchain stage reports an <code>undefined reference</code> error?</li>
+  <li>What do <code>-Wall -Wextra</code> do, and what does adding <code>-Werror</code> change?</li>
+  <li>What is an out-of-source build and why is it good practice?</li>
+  <li>In modern CMake, what is a "target"?</li>
+</ol>
+<details><summary>Quiz Answers</summary>
+<ol>
+  <li>The <strong>linker</strong> — it means a declaration was found at compile time but no definition was found at link time.</li>
+  <li>They enable a broad set of compiler warnings — free, early bug reports. <code>-Werror</code> turns each one into an error, so the build fails instead of printing a warning nobody reads. Together they make "no warnings" a rule the compiler enforces rather than a habit you have to remember.</li>
+  <li>All generated files go into a separate directory (e.g., <code>build/</code>), keeping sources clean; cleanup is deleting one folder, and multiple configurations can coexist.</li>
+  <li>A named buildable thing — an executable or library — to which you attach sources, options, and dependencies with <code>target_*</code> commands.</li>
+</ol>
+</details>
+
+<h4>Exercises</h4>
+<ol>
+  <li><strong>Break it three ways.</strong> Take <code>hello.cpp</code> and (a) delete the semicolon after <code>return 0</code>, (b) misspell <code>main</code> as <code>mian</code>, (c) delete the <code>#include &lt;iostream&gt;</code> line. Compile after each change and classify every error as compiler or linker.</li>
+  <li><strong>Exit codes.</strong> Change <code>main</code> to <code>return 42;</code>, rebuild, run, and print the exit code (<code>echo $?</code> on Linux/macOS, <code>echo %ERRORLEVEL%</code> on Windows cmd). Why might a real tool return nonzero?</li>
+  <li><strong>Your second target.</strong> In the CMake project, add a second executable target <code>goodbye</code> built from a new <code>src/goodbye.cpp</code> that prints a farewell. Build and run both.</li>
+  <li><strong>Debugger scavenger hunt.</strong> In §1.7's program, set a breakpoint on the <code>if</code> line instead. Using only the debugger (no reading ahead), determine how many times the condition is <em>false</em>.</li>
+</ol>
+<details><summary>Exercise Solutions</summary>
+<ol>
+  <li>(a) Compiler error (syntax), reported near the following line. (b) Compiles fine, then a <strong>linker</strong> error: no <code>main</code> definition exists — the linker needs it as the entry point. (c) Compiler error: <code>std::cout</code> is undeclared because its declaration was never pasted in.</li>
+  <li>Output shows exit code <code>42</code>. Real tools return nonzero to tell scripts and CI systems that something failed — e.g., a compiler returns nonzero when your code doesn't compile, which is how CI knows to mark a build red.</li>
+  <li>Add to <code>CMakeLists.txt</code>:
+<pre><code class="language-cmake">add_executable(goodbye src/goodbye.cpp)
+target_compile_options(goodbye PRIVATE
+  $&lt;$&lt;CXX_COMPILER_ID:MSVC&gt;:/W4;/WX&gt;
+  $&lt;$&lt;NOT:$&lt;CXX_COMPILER_ID:MSVC&gt;&gt;:-Wall;-Wextra;-Werror&gt;
+)</code></pre>
+and create <code>src/goodbye.cpp</code>:
+<span class="filename">src/goodbye.cpp</span>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+int main() { std::cout &lt;&lt; "Goodbye for today!\n"; }</code></pre>
+<p class="srcref">In the repo: <code>implementations/day01/06-goodbye/</code></p>
+(Duplicating warning flags is clumsy — Day 18 shows how to share settings across targets properly.)</li>
+  <li>Three times — for the odd values 3, 15, and 7. (The condition is true for 8, 4, and 10.)</li>
+</ol>
+</details>
+
+<h4>Today's Project: <code>daysleft</code> — a Tiny Command-Line Tool</h4>
+<p>Build a small but honest tool: given a number of pages in a book and pages you read per day, it reports how many days you need to finish. It exercises everything from today: a CMake project, command-line arguments, basic validation, and exit codes.</p>
+<pre><code>daysleft/
+├── CMakeLists.txt
+└── src/
+    └── main.cpp</code></pre>
+<span class="filename">CMakeLists.txt</span>
+<pre><code class="language-cmake">cmake_minimum_required(VERSION 3.25)
+project(daysleft VERSION 0.1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+add_executable(daysleft src/main.cpp)
+target_compile_options(daysleft PRIVATE
+  $&lt;$&lt;CXX_COMPILER_ID:MSVC&gt;:/W4;/WX&gt;
+  $&lt;$&lt;NOT:$&lt;CXX_COMPILER_ID:MSVC&gt;&gt;:-Wall;-Wextra;-Werror&gt;
+)</code></pre>
+<span class="filename">src/main.cpp</span>
+<pre><code class="language-cpp">// daysleft — how many days to finish the book?
+// Usage: daysleft &lt;total_pages&gt; &lt;pages_per_day&gt;
+#include &lt;iostream&gt;
+#include &lt;exception&gt;   // std::exception — the base type we catch below
+#include &lt;string&gt;
+
+int main(int argc, char* argv[]) {
+    if (argc != 3) {
+        std::cerr &lt;&lt; "usage: daysleft &lt;total_pages&gt; &lt;pages_per_day&gt;\n";
+        return 1;                       // nonzero = error, for scripts/CI
+    }
+
+    int total = 0;
+    int per_day = 0;
+    try {
+        total   = std::stoi(argv[1]);   // string → int; throws on garbage
+        per_day = std::stoi(argv[2]);
+    } catch (const std::exception&amp;) {
+        std::cerr &lt;&lt; "error: both arguments must be whole numbers\n";
+        return 1;
+    }
+
+    if (total &lt;= 0 || per_day &lt;= 0) {
+        std::cerr &lt;&lt; "error: both numbers must be positive\n";
+        return 1;
+    }
+
+    // Integer ceiling division: 300 pages at 40/day = 8 days, not 7.
+    const int days = (total + per_day - 1) / per_day;
+
+    std::cout &lt;&lt; "At " &lt;&lt; per_day &lt;&lt; " pages/day, you will finish "
+              &lt;&lt; total &lt;&lt; " pages in " &lt;&lt; days
+              &lt;&lt; (days == 1 ? " day.\n" : " days.\n");
+}</code></pre>
+<p class="srcref">In the repo: <code>implementations/day01/07-daysleft/</code></p>
+<pre><code class="language-bash">cmake -S . -B build &amp;&amp; cmake --build build
+./build/daysleft 300 40</code></pre>
+<p>Expected output:</p>
+<pre><code>At 40 pages/day, you will finish 300 pages in 8 days.</code></pre>
+<p>Try it with bad input (<code>./build/daysleft 300 banana</code>) and check the exit code. Notice the pieces you'll deepen soon: <code>std::cerr</code> for errors vs <code>std::cout</code> for results, a first sighting of <code>try</code>/<code>catch</code> (Day 6 in full), and ceiling division without floating point.</p>
+<p><strong>Stretch goals:</strong> print how many pages remain on the final day; add an optional third argument for pages already read; step through the ceiling-division line in the debugger with inputs 300/40 and 320/40 and watch <code>days</code>.</p>
+
+<h4>References for Today</h4>
+<ul>
+  <li>cppreference.com — community reference for the C++ language and library: <a href="https://en.cppreference.com">https://en.cppreference.com</a></li>
+  <li>CMake official documentation and tutorial: <a href="https://cmake.org/cmake/help/latest/">https://cmake.org/cmake/help/latest/</a></li>
+  <li>VS Code C++ documentation (Microsoft): <a href="https://code.visualstudio.com/docs/languages/cpp">https://code.visualstudio.com/docs/languages/cpp</a></li>
+  <li>GCC online documentation: <a href="https://gcc.gnu.org/onlinedocs/">https://gcc.gnu.org/onlinedocs/</a> · Clang documentation: <a href="https://clang.llvm.org/docs/">https://clang.llvm.org/docs/</a> · MSVC C++ docs: <a href="https://learn.microsoft.com/cpp/">https://learn.microsoft.com/cpp/</a></li>
+  <li>C++ compiler feature support table (which compiler supports which C++17/20/23 feature): <a href="https://en.cppreference.com/w/cpp/compiler_support">https://en.cppreference.com/w/cpp/compiler_support</a></li>
+  <li>ISO C++ Foundation — standardization news and FAQs: <a href="https://isocpp.org">https://isocpp.org</a></li>
+</ul>
+
+<div class="callout">
+  <span class="label">Coming Up on Day 2</span>
+  With a working toolchain, we start on the language itself: modern types, <code>auto</code>, <code>const</code>-correctness, references, and brace initialization — the fundamentals that make everything after them safer.
+</div>
+</section>
+<nav class="page-nav"><a href="about-the-author.html">← About the Author</a><a href="index.html">Contents</a><div class="spacer"></div><a href="under-construction.html">Day 2 →</a></nav>
+<footer>
+  <p>Modern C++ in 21 Days · Prose © 2026 Vahid Moslemi, CC BY 4.0 · Code samples MIT licensed · Days 4–21 are appended as they are written.<br><a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days">Source &amp; issues on GitHub</a> · <a href="https://www.linkedin.com/in/vahid-moslemi/">LinkedIn</a></p>
+</footer>
+</main>
+</body>
+</html>

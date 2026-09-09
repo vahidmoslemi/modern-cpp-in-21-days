@@ -1,10 +1,7 @@
-# CMake build trees (out-of-tree builds are regenerated)
-implementations/**/build/
-build/
-
 # Editor / OS cruft
 .DS_Store
 *.swp
+*.sh
 
 # Python
 __pycache__/
@@ -13,3 +10,54 @@ __pycache__/
 
 # BookForge scratch (reviews are committed; pending manual bridges are not)
 .bookforge/reviews/**/pending/
+
+# ---------------------------------------------------------------------------
+# implementations/ — sources and build files only.
+#
+# A compiled program has no extension (src/main sits next to src/main.cpp), so
+# match it by shape: ignore every file here whose name has no dot, then take
+# back the directories and the real files. Everything genuine has an extension —
+# *.cpp, *.h, *.hpp, CMakeLists.txt, *.expected, *.txt, *.md, *.sh, *.cmake.
+#
+# Order matters: the rules below this block must stay below it, because a later
+# pattern beats an earlier one and these two negations would otherwise drag
+# build trees and IDE files back in.
+# ---------------------------------------------------------------------------
+implementations/**/*
+!implementations/**/*/
+!implementations/**/*.*
+
+# CMake build trees, anywhere (out-of-tree builds are regenerated)
+build/
+implementations/**/build/
+
+# Per-project failure reports written by tools/check_day.py — scratch, fix and delete
+implementations/**/issues.txt
+implementations/**/expected_output.txt
+implementations/**/build.sh
+implementations/**/*.expected
+
+
+# Compiler and linker output
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe
+*.out
+*.pdb
+*.ilk
+*.exp
+*.dSYM/
+
+# IDE and language-server files in the sample projects
+implementations/**/.vscode/
+implementations/**/.vs/
+implementations/**/.idea/
+implementations/**/.cache/
+implementations/**/*.code-workspace
+implementations/**/CMakeUserPresets.json
+implementations/**/compile_commands.json

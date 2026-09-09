@@ -256,7 +256,7 @@ int main() {
     std::cout &lt;&lt; "Hello, " &lt;&lt; who &lt;&lt; "!\n";
     return 0;   // 0 = success; the OS sees this exit code
 }</code></pre>
-<p class="srcref">In the repo: <code>implementations/day01/01-hello/</code></p>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day01/01-hello"><code>implementations/day01/01-hello/</code></a></p>
 <p>Line by line:</p>
 <ul>
   <li><code>#include &lt;iostream&gt;</code> — pulls in declarations for the standard output stream <code>std::cout</code>. Angle brackets mean "a standard/system header."</li>
@@ -349,7 +349,7 @@ target_compile_options(hello PRIVATE
   $&lt;$&lt;CXX_COMPILER_ID:MSVC&gt;:/W4;/WX&gt;
   $&lt;$&lt;NOT:$&lt;CXX_COMPILER_ID:MSVC&gt;&gt;:-Wall;-Wextra;-Werror&gt;
 )</code></pre>
-<p class="srcref">In the repo: <code>implementations/day01/02-hello-cmake/</code></p>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day01/02-hello-cmake"><code>implementations/day01/02-hello-cmake/</code></a></p>
 <p>The key mental model: modern CMake is about <strong>targets</strong>. <code>add_executable</code> creates a target; <code>target_compile_options</code> (and friends like <code>target_link_libraries</code>) attach properties <em>to that target</em>. We will build on this model all the way to Day 19's SDK.</p>
 <p>Configure and build — the same commands on all three platforms, with one Windows caveat: run them in the Developer Command Prompt, because the CMake installed by the "Desktop development with C++" workload is only on the PATH there:</p>
 <pre><code class="language-bash">cd day01-cmake
@@ -394,7 +394,7 @@ int main() {
     std::vector&lt;int&gt; data{3, 8, 15, 4, 7, 10};
     std::cout &lt;&lt; "Sum of evens: " &lt;&lt; sum_of_evens(data) &lt;&lt; "\n";
 }</code></pre>
-<p class="srcref">In the repo: <code>implementations/day01/03-sum-of-evens/</code></p>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day01/03-sum-of-evens"><code>implementations/day01/03-sum-of-evens/</code></a></p>
 <p>Expected output: <code>Sum of evens: 22</code>.</p>
 <p>Click in the gutter left of the <code>total += v;</code> line to set a red breakpoint dot, then press the 🐞 button. Execution stops at the breakpoint and you can:</p>
 <ul>
@@ -439,7 +439,7 @@ int main() {
         std::cout &lt;&lt; *it &lt;&lt; " (" &lt;&lt; it-&gt;size() &lt;&lt; ")\n";
     }
 }</code></pre>
-<p class="srcref">In the repo: <code>implementations/day01/04-glimpse-old/</code></p>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day01/04-glimpse-old"><code>implementations/day01/04-glimpse-old/</code></a></p>
 <p>Nothing here is broken. The vector manages its own memory, the strings know their own lengths, and <code>std::sort</code> does the sorting — that is why C++98 was a real step forward. What it costs you is <em>ceremony</em>: the comparison rule sits in a function far from the one line that cares about it, the loop names a type the compiler could have worked out, and every name added is another <code>push_back</code>. Read the loop header again and notice how much of it is machinery rather than meaning.</p>
 <p>Now the same task, modern style:</p>
 <span class="filename">glimpse_modern.cpp</span>
@@ -461,7 +461,7 @@ int main() {
         std::cout &lt;&lt; name &lt;&lt; " (" &lt;&lt; name.size() &lt;&lt; ")\n";
     }
 }</code></pre>
-<p class="srcref">In the repo: <code>implementations/day01/05-glimpse-modern/</code></p>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day01/05-glimpse-modern"><code>implementations/day01/05-glimpse-modern/</code></a></p>
 <p>Both programs print exactly the same thing:</p>
 <pre><code>Margaret (8)
 Bjarne (6)
@@ -520,7 +520,7 @@ and create <code>src/goodbye.cpp</code>:
 <span class="filename">src/goodbye.cpp</span>
 <pre><code class="language-cpp">#include &lt;iostream&gt;
 int main() { std::cout &lt;&lt; "Goodbye for today!\n"; }</code></pre>
-<p class="srcref">In the repo: <code>implementations/day01/06-goodbye/</code></p>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day01/06-goodbye"><code>implementations/day01/06-goodbye/</code></a></p>
 (Duplicating warning flags is clumsy — Day 18 shows how to share settings across targets properly.)</li>
   <li>Three times — for the odd values 3, 15, and 7. (The condition is true for 8, 4, and 10.)</li>
 </ol>
@@ -580,7 +580,7 @@ int main(int argc, char* argv[]) {
               &lt;&lt; total &lt;&lt; " pages in " &lt;&lt; days
               &lt;&lt; (days == 1 ? " day.\n" : " days.\n");
 }</code></pre>
-<p class="srcref">In the repo: <code>implementations/day01/07-daysleft/</code></p>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day01/07-daysleft"><code>implementations/day01/07-daysleft/</code></a></p>
 <pre><code class="language-bash">cmake -S . -B build &amp;&amp; cmake --build build
 ./build/daysleft 300 40</code></pre>
 <p>Expected output:</p>

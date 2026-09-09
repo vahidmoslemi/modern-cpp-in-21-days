@@ -41,13 +41,17 @@ By opening a pull request you confirm that your contribution is your own origina
 
 Every listing in this book is compiled and executed before publication. Contributions are held to the same standard.
 
+The book targets **C++23**, so build at C++23 — not at an older standard:
+
 ```bash
-g++ -std=c++20 -Wall -Wextra -Werror -o demo demo.cpp && ./demo
-# or: clang++ -std=c++20 -Wall -Wextra -Werror ...
-# or: cl /std:c++20 /W4 /EHsc demo.cpp
+g++ -std=c++23 -Wall -Wextra -Werror -o demo demo.cpp && ./demo
+# or: clang++ -std=c++23 -Wall -Wextra -Werror ...
+# or: cl /std:c++latest /W4 /WX /EHsc demo.cpp
 ```
 
-- **No warnings.** `-Werror` (or `/W4` clean) is the bar.
+MSVC has **no `/std:c++23` option**. If you pass one, `cl` prints *"warning D9002: ignoring unknown option"* and then builds at its default, C++14 — your code compiles and the standard you tested is not the one you think. Use `/std:c++latest`, which needs Visual Studio 2022 17.13 or newer. On macOS you need Apple Clang 16 (Xcode 16) or newer; Apple Clang 15 only accepts `-std=c++2b`.
+
+- **No warnings.** `-Werror` (or `/W4 /WX` clean) is the bar. This is the same command `tools/check_day.py` runs over every sample in the book.
 - **Expected output in the book must match real output**, character for character. If you change a sample, re-run it and update the output block.
 - State the standard a feature requires and, if you can, which compilers you verified on.
 

@@ -1,3 +1,5 @@
+[![Modern C++ in 21 Days — a self-teaching guide by Vahid Moslemi. From first build to shipping a cross-platform SDK.](book/images/modern-cpp-in-21-days-linkedin-1200x628.png)](https://vahidmoslemi.github.io/modern-cpp-in-21-days/)
+
 # Modern C++ in 21 Days
 
 **A free, open-source, self-teaching book for developers who want to *use* modern C++ professionally.**

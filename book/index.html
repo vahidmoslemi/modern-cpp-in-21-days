@@ -6,6 +6,18 @@
 <meta name="author" content="Vahid Moslemi">
 <meta name="description" content="Modern C++ in 21 Days — a free, self-teaching book covering C++17/20/23, CMake, VSCode, testing, concurrency, and SDK design.">
 <title>Contents — Modern C++ in 21 Days</title>
+<link rel="canonical" href="https://vahidmoslemi.github.io/modern-cpp-in-21-days/book/index.html">
+<!-- Link preview card, used when the book is shared on LinkedIn and similar sites -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Modern C++ in 21 Days">
+<meta property="og:title" content="Modern C++ in 21 Days — a free, self-teaching book">
+<meta property="og:description" content="From first build to shipping a cross-platform SDK — with C++17, C++20, and C++23, CMake, VSCode, testing, and concurrency. Free to read, free forever.">
+<meta property="og:url" content="https://vahidmoslemi.github.io/modern-cpp-in-21-days/book/index.html">
+<meta property="og:image" content="https://vahidmoslemi.github.io/modern-cpp-in-21-days/book/images/modern-cpp-in-21-days-linkedin-1200x628.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="628">
+<meta property="og:image:alt" content="Book cover — Modern C++ in 21 Days, a self-teaching guide by Vahid Moslemi.">
+<meta name="twitter:card" content="summary_large_image">
 <style>
 :root{
   --ink:#1c2733;
@@ -105,7 +117,7 @@ table{border-collapse:collapse; width:100%; margin:1rem 0; font-size:.95rem}
 th,td{border:1px solid var(--rule); padding:.5rem .7rem; text-align:left; vertical-align:top}
 th{background:#f0eee6; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:.85rem;
    text-transform:uppercase; letter-spacing:.06em}
-.titlepage{text-align:center; padding:5rem 0 3rem; border-bottom:2px solid var(--rule)}
+.titlepage{text-align:center; padding:2.5rem 0 2.5rem; border-bottom:2px solid var(--rule)}
 .titlepage .series{
   font-family:"SF Mono",Consolas,monospace; font-size:.85rem; letter-spacing:.25em;
   text-transform:uppercase; color:var(--accent);
@@ -116,6 +128,12 @@ th{background:#f0eee6; font-family:"Avenir Next","Segoe UI",sans-serif; font-siz
   letter-spacing:.08em; color:var(--accent-dark); margin-top:1.6rem}
 .titlepage .byline-links{font-family:"SF Mono",Consolas,monospace; font-size:.78rem;
   color:#5b6570; margin-top:.35rem}
+/* cover image on the title page */
+.cover{display:block; width:100%; height:auto; margin:0 auto 1.1rem; border-radius:8px}
+.visually-hidden{
+  position:absolute; width:1px; height:1px; margin:-1px; padding:0;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
 .toc ol{counter-reset:day; list-style:none; padding-left:0}
 .toc > ol > li{
   counter-increment:day; margin:.45rem 0; display:flex; gap:.9rem; align-items:baseline;
@@ -150,10 +168,14 @@ footer{border-top:2px solid var(--rule); margin-top:4rem; padding-top:1.2rem;
 <body>
 <main>
 <div class="titlepage">
-  <span class="series">A Self-Teaching Guide</span>
-  <h1>Modern C++<br>in 21 Days</h1>
-  <p class="subtitle">From first build to shipping a cross-platform SDK — with C++17, C++20, and C++23, CMake, VSCode, testing, and concurrency for working professionals.</p>
-  <p class="byline">Vahid Moslemi</p>
+  <h1 class="visually-hidden">Modern C++ in 21 Days — a self-teaching guide</h1>
+  <img class="cover"
+       src="images/modern-cpp-in-21-days-linkedin-1200x628.png"
+       srcset="images/modern-cpp-in-21-days-linkedin-1200x628.png 1200w,
+               images/modern-cpp-in-21-days-linkedin-2400x1256.png 2400w"
+       sizes="(max-width: 46rem) 100vw, 46rem"
+       width="1200" height="628"
+       alt="Book cover — Modern C++ in 21 Days, a self-teaching guide by Vahid Moslemi. From first build to shipping a cross-platform SDK. C++17, C++20, C++23, CMake, testing, concurrency.">
   <p class="byline-links"><a href="https://github.com/vahidmoslemi/">github.com/vahidmoslemi</a> · <a href="https://www.linkedin.com/in/vahid-moslemi/">linkedin.com/in/vahid-moslemi</a></p>
 </div>
 <nav class="toc" id="toc" aria-labelledby="toc-h">

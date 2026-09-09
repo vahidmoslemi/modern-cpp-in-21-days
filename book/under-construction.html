@@ -106,7 +106,7 @@ table{border-collapse:collapse; width:100%; margin:1rem 0; font-size:.95rem}
 th,td{border:1px solid var(--rule); padding:.5rem .7rem; text-align:left; vertical-align:top}
 th{background:#f0eee6; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:.85rem;
    text-transform:uppercase; letter-spacing:.06em}
-.titlepage{text-align:center; padding:5rem 0 3rem; border-bottom:2px solid var(--rule)}
+.titlepage{text-align:center; padding:2.5rem 0 2.5rem; border-bottom:2px solid var(--rule)}
 .titlepage .series{
   font-family:"SF Mono",Consolas,monospace; font-size:.85rem; letter-spacing:.25em;
   text-transform:uppercase; color:var(--accent);
@@ -117,6 +117,12 @@ th{background:#f0eee6; font-family:"Avenir Next","Segoe UI",sans-serif; font-siz
   letter-spacing:.08em; color:var(--accent-dark); margin-top:1.6rem}
 .titlepage .byline-links{font-family:"SF Mono",Consolas,monospace; font-size:.78rem;
   color:#5b6570; margin-top:.35rem}
+/* cover image on the title page */
+.cover{display:block; width:100%; height:auto; margin:0 auto 1.1rem; border-radius:8px}
+.visually-hidden{
+  position:absolute; width:1px; height:1px; margin:-1px; padding:0;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
 .toc ol{counter-reset:day; list-style:none; padding-left:0}
 .toc > ol > li{
   counter-increment:day; margin:.45rem 0; display:flex; gap:.9rem; align-items:baseline;

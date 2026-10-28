@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Vahid Moslemi">
+<meta name="description" content="Modern C++ in 21 Days — a free, self-teaching book covering C++17/20/23, CMake, VSCode, testing, concurrency, and SDK design.">
+<title>Day 2 — Modern Core Fundamentals — Types, auto, const, References, Initialization — Modern C++ in 21 Days</title>
+<style>
+:root{
+  --ink:#1c2733;
+  --paper:#fbfbf8;
+  --accent:#0b6e6e;        /* compiler teal */
+  --accent-dark:#084f4f;
+  --rule:#d8d5cc;
+  --code-bg:#0f1720;
+  --code-ink:#e6edf3;
+  --note-bg:#eef4f4;
+  --do-bg:#eaf5ec;   --do-edge:#2f7d43;
+  --dont-bg:#fbeeee; --dont-edge:#b03a3a;
+  --pit-bg:#fdf6e7;  --pit-edge:#b07a1e;
+  --std17:#5b6770; --std20:#0b6e6e; --std23:#7a3fa0;
+  --maxw:46rem;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:Charter,"Bitstream Charter","Iowan Old Style",Georgia,serif;
+  font-size:1.06rem; line-height:1.65;
+}
+main{max-width:var(--maxw); margin:0 auto; padding:0 1.25rem 6rem}
+h1,h2,h3,h4{
+  font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;
+  line-height:1.2; color:var(--ink); font-weight:700;
+}
+h1{font-size:2.2rem; margin:2.5rem 0 .5rem}
+h2{font-size:1.55rem; margin:2.5rem 0 .75rem; border-bottom:2px solid var(--rule); padding-bottom:.3rem}
+h3{font-size:1.2rem; margin:1.8rem 0 .5rem}
+h4{font-size:1.02rem; margin:1.4rem 0 .4rem; text-transform:uppercase; letter-spacing:.05em; color:var(--accent-dark)}
+a{color:var(--accent); text-decoration-thickness:1px}
+a:hover{color:var(--accent-dark)}
+a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+p{margin:.8rem 0}
+ul,ol{padding-left:1.4rem}
+li{margin:.3rem 0}
+code{
+  font-family:"SF Mono",Consolas,"Liberation Mono",Menlo,monospace;
+  font-size:.92em; background:#eceae2; padding:.08em .3em; border-radius:3px;
+}
+pre{
+  background:var(--code-bg); color:var(--code-ink);
+  padding:1rem 1.1rem; border-radius:6px; overflow-x:auto;
+  font-size:.87rem; line-height:1.55; margin:1rem 0;
+}
+pre code{background:none; padding:0; color:inherit; font-size:1em}
+.filename{
+  font-family:"SF Mono",Consolas,monospace; font-size:.78rem;
+  background:#1b2a38; color:#9fc1d8; padding:.3rem .8rem;
+  border-radius:6px 6px 0 0; margin:1rem 0 0; display:inline-block;
+}
+.filename + pre{margin-top:0; border-top-left-radius:0}
+.srcref{
+  font-family:"SF Mono",Consolas,monospace; font-size:.76rem;
+  color:#5b6570; margin:-.7rem 0 1.3rem;
+}
+.srcref code{background:none; padding:0; font-size:1em; color:inherit}
+.day-banner{
+  background:var(--accent); color:#fff; border-radius:8px;
+  padding:1.4rem 1.6rem; margin:3rem 0 1.5rem;
+}
+.day-banner .kicker{
+  font-family:"SF Mono",Consolas,monospace; font-size:.8rem;
+  letter-spacing:.18em; text-transform:uppercase; opacity:.85; display:block; margin-bottom:.3rem;
+}
+.day-banner h2{border:none; color:#fff; margin:0; padding:0; font-size:1.7rem}
+/* inline code inside the teal banner: the default pale code background makes white text unreadable */
+.day-banner code{background:rgba(255,255,255,.18); color:inherit}
+.callout{border-left:4px solid var(--accent); background:var(--note-bg);
+  padding:.8rem 1.1rem; margin:1.2rem 0; border-radius:0 6px 6px 0}
+.callout .label{
+  font-family:"Avenir Next","Segoe UI",sans-serif; font-weight:700;
+  font-size:.78rem; letter-spacing:.12em; text-transform:uppercase;
+  display:block; margin-bottom:.25rem;
+}
+.callout.do{background:var(--do-bg); border-color:var(--do-edge)}
+.callout.do .label{color:var(--do-edge)}
+.callout.dont{background:var(--dont-bg); border-color:var(--dont-edge)}
+.callout.dont .label{color:var(--dont-edge)}
+.callout.pitfall{background:var(--pit-bg); border-color:var(--pit-edge)}
+.callout.pitfall .label{color:var(--pit-edge)}
+.callout.cg{background:#eef0f8; border-color:#4a5aa8}
+.callout.cg .label{color:#4a5aa8}
+.callout.cg .rule{
+  font-family:"SF Mono",Consolas,monospace; font-size:.85rem; font-weight:700;
+}
+.callout.cg pre{font-size:.8rem; margin:.6rem 0 .2rem}
+.std{
+  font-family:"SF Mono",Consolas,monospace; font-size:.7rem; font-weight:700;
+  color:#fff; padding:.15em .5em; border-radius:3px; vertical-align:middle;
+  letter-spacing:.05em;
+}
+.std.s17{background:var(--std17)}
+.std.s20{background:var(--std20)}
+.std.s23{background:var(--std23)}
+table{border-collapse:collapse; width:100%; margin:1rem 0; font-size:.95rem}
+th,td{border:1px solid var(--rule); padding:.5rem .7rem; text-align:left; vertical-align:top}
+th{background:#f0eee6; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:.85rem;
+   text-transform:uppercase; letter-spacing:.06em}
+.titlepage{text-align:center; padding:2.5rem 0 2.5rem; border-bottom:2px solid var(--rule)}
+.titlepage .series{
+  font-family:"SF Mono",Consolas,monospace; font-size:.85rem; letter-spacing:.25em;
+  text-transform:uppercase; color:var(--accent);
+}
+.titlepage h1{font-size:3rem; margin:.6rem 0 .4rem}
+.titlepage .subtitle{font-size:1.15rem; color:#4a5560; max-width:34rem; margin:0 auto}
+.titlepage .byline{font-family:"Avenir Next","Segoe UI",sans-serif; font-size:1rem;
+  letter-spacing:.08em; color:var(--accent-dark); margin-top:1.6rem}
+.titlepage .byline-links{font-family:"SF Mono",Consolas,monospace; font-size:.78rem;
+  color:#5b6570; margin-top:.35rem}
+/* cover image on the title page */
+.cover{display:block; width:100%; height:auto; margin:0 auto 1.1rem; border-radius:8px}
+.visually-hidden{
+  position:absolute; width:1px; height:1px; margin:-1px; padding:0;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+.toc ol{counter-reset:day; list-style:none; padding-left:0}
+.toc > ol > li{
+  counter-increment:day; margin:.45rem 0; display:flex; gap:.9rem; align-items:baseline;
+}
+.toc > ol > li::before{
+  content:"Day " counter(day);
+  font-family:"SF Mono",Consolas,monospace; font-size:.75rem; color:var(--accent);
+  min-width:4.2rem; letter-spacing:.05em;
+}
+details{margin:.8rem 0; border:1px solid var(--rule); border-radius:6px; padding:.5rem .9rem; background:#fff}
+summary{cursor:pointer; font-weight:700; font-family:"Avenir Next","Segoe UI",sans-serif; font-size:.95rem}
+.qa dt{font-weight:700; margin-top:.9rem}
+.qa dd{margin:.25rem 0 0 0}
+footer{border-top:2px solid var(--rule); margin-top:4rem; padding-top:1.2rem;
+  font-size:.85rem; color:#5b6570}
+@media print{
+  pre{white-space:pre-wrap; border:1px solid #999; background:#fff; color:#000}
+  .day-banner{background:#fff; color:#000; border:2px solid #000}
+  a{color:#000; text-decoration:none}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* multi-page navigation (added when the single file was split into pages) */
+.page-nav{display:flex;justify-content:space-between;gap:1rem;margin:3.5rem 0 1rem;
+  padding-top:1rem;border-top:2px solid var(--rule);
+  font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;font-size:.95rem}
+.page-nav a{color:var(--accent-dark);text-decoration:none}
+.page-nav a:hover{text-decoration:underline}
+.page-nav .spacer{flex:1}
+</style>
+</head>
+<body>
+<main>
+<section id="day2" aria-labelledby="day2-h">
+<div class="day-banner">
+  <span class="kicker">Day 2 of 21</span>
+  <h2 id="day2-h">Modern Core Fundamentals — Types, <code>auto</code>, <code>const</code>, References, Initialization</h2>
+</div>
+
+<h3>Today You Will Learn</h3>
+<ul>
+  <li>The fundamental types and when to use fixed-width integers like <code>std::int64_t</code>.</li>
+  <li>Brace initialization — one syntax that works everywhere and refuses to lose data silently.</li>
+  <li><code>auto</code> type deduction: when it helps, when it hides.</li>
+  <li><code>const</code> as your default, and why const-correctness is a safety feature, not a style choice.</li>
+  <li>References — C++'s way of giving a thing a second name, and the workhorse parameter style <code>const T&amp;</code>.</li>
+  <li>Namespaces and scoped enums (<code>enum class</code>) for code that doesn't collide.</li>
+</ul>
+
+<h3>2.1 Types: The Foundation of Safety</h3>
+<p>C++ is <em>statically typed</em>: every variable has a type fixed at compile time, and the compiler checks every use against it. This is your first and cheapest safety net — entire categories of bugs die at compile time instead of in production. The fundamental types:</p>
+<table>
+<tr><th>Type</th><th>Typical size</th><th>Use for</th></tr>
+<tr><td><code>bool</code></td><td>1 byte</td><td><code>true</code> / <code>false</code></td></tr>
+<tr><td><code>char</code></td><td>1 byte</td><td>A single byte / ASCII character</td></tr>
+<tr><td><code>int</code></td><td>4 bytes</td><td>Everyday integers — the default</td></tr>
+<tr><td><code>long long</code></td><td>8 bytes</td><td>Big integers</td></tr>
+<tr><td><code>double</code></td><td>8 bytes</td><td>Real numbers — the default for floating point</td></tr>
+<tr><td><code>float</code></td><td>4 bytes</td><td>Floating point when memory is tight (graphics, huge arrays)</td></tr>
+</table>
+<p>The word "typical" in that table is a warning, and it is close to misleading. The standard only states minimum requirements, so the real sizes change from platform to platform. For SDK work — file formats, network protocols, public APIs — that vagueness is unacceptable. Header <code>&lt;cstdint&gt;</code> provides exact-width types:</p>
+<span class="filename">widths.cpp</span>
+<pre><code class="language-cpp">#include &lt;cstdint&gt;
+#include &lt;iostream&gt;
+
+int main() {
+    std::int32_t  file_id   = -7;          // exactly 32 bits, signed
+    std::uint64_t byte_count = 9'000'000'000; // exactly 64 bits, unsigned
+    //                          ^ digit separators (') aid readability
+
+    std::cout &lt;&lt; "id: "    &lt;&lt; file_id
+              &lt;&lt; ", bytes: " &lt;&lt; byte_count &lt;&lt; "\n";
+    std::cout &lt;&lt; "int is "  &lt;&lt; sizeof(int)    &lt;&lt; " bytes here, "
+              &lt;&lt; "int64_t is " &lt;&lt; sizeof(std::int64_t) &lt;&lt; " everywhere.\n";
+}</code></pre>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day02/01-widths"><code>implementations/day02/01-widths/</code></a></p>
+<pre><code>id: -7, bytes: 9000000000
+int is 4 bytes here, int64_t is 8 everywhere.</code></pre>
+<div class="callout do">
+  <span class="label">Do</span>
+  Use plain <code>int</code> and <code>double</code> for local, everyday arithmetic — and fixed-width types (<code>std::int32_t</code>, <code>std::uint64_t</code>) whenever the exact size matters: binary file formats, wire protocols, and the public headers of your SDK.
+</div>
+<details><summary>Why that rule is split in two</summary>
+<p>It would be simpler if one of the two kinds of type were just better. Each wins in a different place:</p>
+<ul>
+  <li><strong>Readability.</strong> <code>int</code> and <code>double</code> in local code are short and familiar. Writing <code>std::int32_t</code> for every loop counter adds noise and tells the reader nothing new.</li>
+  <li><strong>Speed.</strong> The standard only asks <code>int</code> to hold values up to 32,767, which is 16 bits. On the machines you actually ship to — x86-64 and ARM — it is 32 bits, and arithmetic on it is as fast as the hardware gets. Plain <code>int</code> is the type the compiler is most used to.</li>
+  <li><strong>A stable public API.</strong> Your SDK header is compiled by other people, on their platform, with their compiler. <code>long</code> is 32 bits on 64-bit Windows and 64 bits on 64-bit Linux and macOS, so a <code>long</code> in your header means two different things to two clients. <code>std::int32_t</code> means the same thing to everyone.</li>
+  <li><strong>Safe serialization.</strong> When you write bytes to a file or send them over a network, the reader on the other side counts from a fixed offset. If one field is 4 bytes on the sender and 8 on the receiver, every field after it is read from the wrong place. Here fixed-width types are not a preference — they are the only correct choice.</li>
+</ul>
+<table>
+<tr><th>Type group</th><th>Use it for</th><th>Why</th></tr>
+<tr><td><code>int</code>, <code>double</code></td><td>Loop counters, local arithmetic, short-lived values, ordinary logic</td><td>Short to read, and the natural size for the CPU</td></tr>
+<tr><td><code>std::int32_t</code>, <code>std::uint64_t</code></td><td>Network packets, binary files, public SDK headers, hardware registers</td><td>The same number of bits on every compiler and every platform</td></tr>
+</table>
+</details>
+<div class="callout pitfall">
+  <span class="label">Common Pitfall — unsigned arithmetic</span>
+  Unsigned types wrap around instead of going negative: if <code>std::uint32_t n = 0;</code> then <code>n - 1</code> is 4,294,967,295 — not −1. A classic bug is looping down to zero with an unsigned counter and never terminating. Rule of thumb: use unsigned types for bit patterns and sizes coming from the standard library, use <em>signed</em> types for arithmetic.
+</div>
+
+<h3>2.2 Initialization: Use Braces</h3>
+<p>Historic C++ accumulated several initialization syntaxes. Modern C++ settles on one default — <strong>brace initialization</strong> — for two reasons: it works in every context, and it refuses to <em>narrow</em> (silently lose information). You will meet the same thing under other names: the standard calls it <em>list initialization</em>, and when C++11 introduced it everybody called it <em>uniform initialization</em>, because one syntax finally covered every case.</p>
+<span class="filename">braces.cpp</span>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+int main() {
+    int    answer{42};              // brace init of a fundamental type
+    double ratio{0.5};
+    std::vector&lt;int&gt; primes{2, 3, 5, 7};   // works for containers too
+
+    int truncated = 7.9;            // legal! silently becomes 7
+    // int refused{7.9};            // ERROR: narrowing — compiler stops you
+
+    int zero{};                     // empty braces = zero-initialize
+    std::cout &lt;&lt; answer &lt;&lt; " " &lt;&lt; ratio &lt;&lt; " " &lt;&lt; primes.size()
+              &lt;&lt; " " &lt;&lt; truncated &lt;&lt; " " &lt;&lt; zero &lt;&lt; "\n";
+}</code></pre>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day02/02-braces"><code>implementations/day02/02-braces/</code></a></p>
+<pre><code>42 0.5 4 7 0</code></pre>
+<p>That commented-out line is the point: with <code>=</code>, assigning <code>7.9</code> to an <code>int</code> quietly throws away <code>.9</code>; with braces, it's a compile error. You just met the book's recurring theme — <em>prefer constructs where mistakes don't compile</em>. In other words: pick the construct that catches the error while you build, not the one that catches it while the program runs. That choice has a name — <strong>compile-time safety</strong> — and it is one of the basic habits of code other people can rely on.</p>
+<p>That is why braces are the default, and it also tells you when the choice doesn't matter. Where nothing <em>can</em> narrow — a counter starting at <code>0</code>, a <code>double</code> starting at <code>0.0</code>, a copy of something that already has the right type — <code>=</code> is still fine, and you'll meet both forms in this book. Reach for braces whenever the two sides are different types, because that is exactly where the silent loss happens.</p>
+<div class="callout pitfall">
+  <span class="label">Common Pitfall — uninitialized variables</span>
+  <code>int x;</code> inside a function is <em>not</em> zero — it holds whatever bytes were already sitting in that memory, and reading it is <strong>undefined behavior</strong>. Learn that term now, because the book leans on it from here on: it means the standard sets no limit at all on what your program may do next. It may print nonsense, it may crash, or it may look perfectly correct for months and then break the day you edit an unrelated line. Notice how it differs from Day 1's <code>undefined reference</code>: that one is a linker error, printed on your screen, and the build stops. Undefined behavior is silent — the build succeeds and the program runs. Either initialize with a real value or use <code>int x{};</code>. Never declare now, initialize later "when you know the value" — declare <em>where</em> you know the value.
+</div>
+<div class="callout cg">
+  <span class="label">Core Guidelines</span>
+  <span class="rule"><a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-always">ES.20: Always initialize an object</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-list">ES.23: Prefer the <code>{}</code>-initializer syntax</a></span>
+  <p>In plain words: never create a variable whose value is "whatever happened to be in that memory," and when you do initialize, prefer braces because they refuse to silently chop values down. Think of braces as a picky mover who won't cram a sofa into a car and call it "delivered":</p>
+<pre><code class="language-cpp">int hits;              // BAD (ES.20): garbage value, reading it = undefined behavior
+int hits2 = 0;         // OK: initialized
+int hits3{};           // GOOD: zero, and braces refuse to narrow
+
+double d = 7.9;
+int a = d;             // BAD-ish (ES.23): compiles, silently becomes 7
+int b{d};              // GOOD: compile ERROR — data loss must be explicit</code></pre>
+  <p>One detail if you drop those lines into a file of your own, because the two cases are not treated alike. <code>int refused{7.9}</code> in <code>braces.cpp</code> above is a hard error in GCC and in Clang even with no warning flags at all, because <code>7.9</code> is a constant the compiler can read and measure. Here the value arrives in the variable <code>d</code>, which the compiler will not look inside, so GCC only <em>warns</em> (<code>-Wnarrowing</code>) and still produces a working program. Clang rejects it either way. This book compiles every sample with <code>-Wall -Wextra -Werror</code> — the flags Day 1 §1.5 told you to make a habit — and <code>-Werror</code> turns that GCC warning into an error, so on your machine the build stops.</p>
+</div>
+
+<h3>2.3 <code>auto</code>: Deduce, Don't Repeat</h3>
+<p><code>auto</code> asks the compiler to deduce a variable's type from its initializer. The type is still fixed and checked — <code>auto</code> is not "dynamic typing", it's "don't make me repeat what's already on the right-hand side":</p>
+<span class="filename">auto_demo.cpp</span>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+int main() {
+    auto count = 10;                 // int
+    auto price = 9.99;               // double
+    auto name  = std::string{"Ada"}; // std::string, stated explicitly on the right
+
+    std::vector&lt;std::string&gt; team{"Ada", "Grace", "Bjarne"};
+
+    // The best reason for auto: types that are long or nearly unwritable.
+    for (auto it = team.begin(); it != team.end(); ++it) {
+        //  ^ spares you: std::vector&lt;std::string&gt;::iterator
+        std::cout &lt;&lt; *it &lt;&lt; " ";
+    }
+    std::cout &lt;&lt; "\n" &lt;&lt; name &lt;&lt; " x" &lt;&lt; count &lt;&lt; " @ " &lt;&lt; price &lt;&lt; "\n";
+}</code></pre>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day02/03-auto-demo"><code>implementations/day02/03-auto-demo/</code></a></p>
+<pre><code>Ada Grace Bjarne 
+Ada x10 @ 9.99</code></pre>
+<p>Two notes on that loop. <code>*it</code> means "the item this iterator is pointing at" — the <code>*</code> unwraps the iterator to get the value, and Day 4 returns to that symbol properly when it covers pointers. And the loop is spelled out the long way here <em>only</em> so you can see the type name <code>auto</code> spared you. In real code you would write <code>for (const auto&amp; name : team)</code> — the range-based <code>for</code> that Day 1 §1.8 used to retire exactly this boilerplate. Keep the explicit iterator for the cases that genuinely need the iterator itself, such as the position a search like <code>std::find</code> hands back.</p>
+<div class="callout pitfall">
+  <span class="label">Common Pitfall — <code>auto</code> deduces exactly what's there</span>
+  <code>auto s = "hello";</code> makes <code>s</code> a <code>const char*</code> (a C-style pointer), <em>not</em> a <code>std::string</code>. If you want a string, say so: <code>auto s = std::string{"hello"};</code>. Similarly, <code>auto</code> drops references and <code>const</code> from the initializer — Day 4 returns to this when it matters for performance.
+</div>
+<div class="callout do">
+  <span class="label">Do</span>
+  Use <code>auto</code> when the type is obvious from the right-hand side or painful to spell (iterators, lambdas). Write the type explicitly when it carries information the reader needs — especially in public SDK headers, where explicitness is documentation.
+</div>
+<div class="callout cg">
+  <span class="label">Core Guideline</span>
+  <span class="rule"><a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-auto">ES.11: Use <code>auto</code> to avoid redundant repetition of type names</a></span>
+  <p>In plain words: when the type is already written on the right side of the <code>=</code>, writing it again on the left adds noise and one more place to make a mistake — like signing a form twice "to be sure":</p>
+<pre><code class="language-cpp">std::vector&lt;std::string&gt;::iterator it = team.begin();  // BAD: long, repeats info
+auto it2 = team.begin();                                // GOOD: same type, zero noise
+
+auto n = 5;            // fine: obviously int
+auto x = compute();    // careful: what type is x? If a reader can't tell,
+                       // spell it out — auto serves readability, not laziness</code></pre>
+</div>
+
+<h3>2.4 <code>const</code>: Your Default, Not an Afterthought</h3>
+<p><code>const</code> means "this name will never be used to modify this value." The compiler enforces it. Professionals make <code>const</code> the <em>default</em> and mutability the exception, because every <code>const</code> is one less thing that can change behind your back — in a 50-line function, knowing that 9 of 12 variables can't change shrinks the space where a bug can hide:</p>
+<span class="filename">const_demo.cpp</span>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+int main() {
+    const double vat_rate{0.19};       // set once, trusted everywhere after
+    const int    net_cents{4'999};
+
+    // vat_rate = 0.21;                // ERROR: assignment of read-only variable
+
+    const int vat   = static_cast&lt;int&gt;(net_cents * vat_rate);
+    const int gross = net_cents + vat;
+    //        ^ even intermediate results: const unless they must change
+
+    std::cout &lt;&lt; "net "   &lt;&lt; net_cents &lt;&lt; "  vat " &lt;&lt; vat
+              &lt;&lt; "  gross " &lt;&lt; gross &lt;&lt; " cents\n";
+}</code></pre>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day02/04-const-demo"><code>implementations/day02/04-const-demo/</code></a></p>
+<pre><code>net 4999  vat 949  gross 5948 cents</code></pre>
+<p>Note <code>static_cast&lt;int&gt;(...)</code>: modern C++'s explicit, searchable cast. It says "I know this double-to-int conversion truncates, and I mean it" — unlike the silent narrowing from §2.2.</p>
+<div class="callout cg">
+  <span class="label">Core Guidelines</span>
+  <span class="rule"><a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-const">ES.25: Declare an object <code>const</code> or <code>constexpr</code> unless you want to modify its value later on</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#res-casts-named">ES.49: If you must use a cast, use a named cast</a></span>
+  <p>ES.25 in plain words: a variable that <em>can't</em> change is a variable you never have to suspect. Default to <code>const</code>; drop it only when the compiler complains — that complaint is the compiler telling you exactly which variables actually vary:</p>
+<pre><code class="language-cpp">double rate = 0.19;        // BAD-ish: can anyone reassign this later? must check all code
+const double rate2{0.19};  // GOOD: guaranteed constant; reader relaxes</code></pre>
+  <p>ES.49 in plain words: old C-style casts like <code>(int)x</code> are invisible to searches and can secretly do several different dangerous things. Named casts say what you mean and are greppable:</p>
+<pre><code class="language-cpp">int cents = (int)(price * 100);              // BAD: C-style cast, hides intent
+int cents2 = static_cast&lt;int&gt;(price * 100);  // GOOD: explicit, searchable, checked</code></pre>
+</div>
+<p>For values known at compile time, go one step further with <code>constexpr</code>: the compiler guarantees compile-time evaluation, and the value can be used where the language demands a constant (array sizes, template arguments):</p>
+<pre><code class="language-cpp">constexpr int max_retries = 5;      // computed and frozen at compile time
+constexpr double pi = 3.14159265358979323846;</code></pre>
+<p>Day 12 develops compile-time programming fully; for now: <code>constexpr</code> for compile-time constants, <code>const</code> for run-time ones.</p>
+
+<h3>2.5 References: A Second Name for an Existing Thing</h3>
+<p>A reference (<code>T&amp;</code>) is an alias — another name for an object that already exists. It must be initialized when declared and can never be re-seated to refer to something else:</p>
+<span class="filename">refs.cpp</span>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+int main() {
+    std::string original{"draft"};
+    std::string&amp; alias = original;   // alias IS original, under another name
+
+    alias += " v2";                  // modifies original
+    std::cout &lt;&lt; original &lt;&lt; "\n";   // prints: draft v2
+
+    std::string copy = original;     // no &amp;: an independent duplicate
+    copy += " (copy)";               // original unaffected
+    std::cout &lt;&lt; original &lt;&lt; " | " &lt;&lt; copy &lt;&lt; "\n";
+}</code></pre>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day02/05-refs"><code>implementations/day02/05-refs/</code></a></p>
+<pre><code>draft v2
+draft v2 | draft v2 (copy)</code></pre>
+<p>References earn their keep in <strong>function parameters</strong>. Passing by value copies the argument — trivial for an <code>int</code>, expensive for a million-element vector. Passing by reference passes the object itself. Combining with <code>const</code> gives the single most common parameter style in professional C++:</p>
+<span class="filename">params.cpp</span>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+// Read-only access, no copy: const T&amp; — the workhorse.
+double average(const std::vector&lt;double&gt;&amp; samples) {
+    if (samples.empty()) return 0.0;
+    double sum = 0.0;                       // must change → not const
+    for (const double s : samples) sum += s;
+    return sum / static_cast&lt;double&gt;(samples.size());
+}
+
+// Intentional modification: T&amp; — visible in the signature.
+void append_unit(std::string&amp; label) {
+    label += " ms";
+}
+
+int main() {
+    const std::vector&lt;double&gt; latencies{12.5, 9.8, 15.2, 11.1};
+    std::cout &lt;&lt; "avg: " &lt;&lt; average(latencies) &lt;&lt; "\n";
+
+    std::string label{"p99 latency"};
+    append_unit(label);
+    std::cout &lt;&lt; label &lt;&lt; "\n";
+}</code></pre>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day02/06-params"><code>implementations/day02/06-params/</code></a></p>
+<pre><code>avg: 12.15
+p99 latency ms</code></pre>
+<p>Read the three options as a vocabulary of intent:</p>
+<table>
+<tr><th>Parameter</th><th>Meaning</th><th>Cost</th></tr>
+<tr><td><code>T value</code></td><td>"I take my own copy" — for small types (<code>int</code>, <code>double</code>) or when you need a copy anyway</td><td>Copy</td></tr>
+<tr><td><code>const T&amp; value</code></td><td>"I read yours, I won't touch it" — the default for anything bigger than a few machine words</td><td>Free</td></tr>
+<tr><td><code>T&amp; value</code></td><td>"I will modify yours" — mutation, declared honestly in the signature</td><td>Free</td></tr>
+</table>
+<div class="callout cg">
+  <span class="label">Core Guidelines</span>
+  <span class="rule"><a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-in">F.16: For "in" parameters, pass cheaply-copied types by value and others by reference to <code>const</code></a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-inout">F.17: For "in-out" parameters, pass by reference to non-<code>const</code></a></span>
+  <p>In plain words: handing someone an <code>int</code> is like handing them a coin — give them a copy. Handing them a database is like handing them a warehouse — give them the address (<code>const&amp;</code>), not a duplicate warehouse. And if they're supposed to <em>renovate</em> the warehouse, hand over the address without the "look, don't touch" sign (<code>&amp;</code>):</p>
+<pre><code class="language-cpp">void f(std::string s);          // BAD as read-only "in": copies the whole string
+void f(const std::string&amp; s);   // GOOD "in":  reads yours, promises not to touch
+void g(std::string&amp; s);         // GOOD "in-out": will modify yours — and says so
+void h(int n);                  // GOOD: int is a coin; copying is the cheap option</code></pre>
+</div>
+<div class="callout dont">
+  <span class="label">Don't</span>
+  Don't return a reference to a local variable — the local dies when the function returns, and the reference points at a corpse (undefined behavior). A reference whose object is already gone is called a <strong>dangling reference</strong>, and you will see that term in compiler messages and in every code review. Compilers warn about the simple cases; take the warning seriously. Day 4 covers object lifetime in depth.
+</div>
+<div class="callout cg">
+  <span class="label">Core Guideline</span>
+  <span class="rule"><a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rf-dangle">F.43: Never (directly or indirectly) return a pointer or a reference to a local object</a></span>
+  <p>In plain words: a local variable is a sandcastle — it exists only until the function's tide (the return) comes in. Returning a reference to it hands the caller a map to a washed-away castle:</p>
+<pre><code class="language-cpp">const std::string&amp; greet() {
+    std::string s = "hello";
+    return s;                 // BAD: s is destroyed right here; caller gets a dangling ref
+}
+
+std::string greet2() {
+    std::string s = "hello";
+    return s;                 // GOOD: return by value — the caller gets their own castle
+}</code></pre>
+  <p>The indirect version is just as fatal, and harder to spot. Returning a reference to an <em>element inside</em> a local container, or packing a reference to a temporary into a struct you return, is the same undefined behavior — the same bug wearing a disguise:</p>
+<pre><code class="language-cpp">const std::string&amp; first_label() {
+    std::vector&lt;std::string&gt; labels{"p50", "p99"};
+    return labels.front();    // BAD: the vector dies here, and its elements with it
+}</code></pre>
+  <p>Nothing in that function names a local variable in the <code>return</code>, which is exactly why it slips through. Clang does report it, but GCC 15 stays silent even at <code>-Wall -Wextra</code> — so here the habit has to protect you, not the compiler.</p>
+</div>
+
+<h3>2.6 Namespaces and Scoped Enums: Names That Don't Collide</h3>
+<p>Your SDK will define names like <code>connect</code>, <code>Error</code>, <code>Config</code> — and so does everyone else's. Namespaces partition the world so those names can coexist:</p>
+<span class="filename">namespaces.cpp</span>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+namespace metrics {                    // your library's territory
+    // Scoped enum: enumerators live inside Unit, convert to int only explicitly.
+    enum class Unit { millis, seconds, minutes };
+
+    std::string to_string(Unit u) {
+        switch (u) {
+            case Unit::millis:  return "ms";
+            case Unit::seconds: return "s";
+            case Unit::minutes: return "min";
+        }
+        return "?";
+    }
+
+    namespace detail {                 // convention: internals, keep out
+        constexpr int version = 3;
+    }
+}
+
+int main() {
+    const auto unit = metrics::Unit::seconds;   // qualified access
+    std::cout &lt;&lt; "unit: " &lt;&lt; metrics::to_string(unit)
+              &lt;&lt; " (impl v" &lt;&lt; metrics::detail::version &lt;&lt; ")\n";
+}</code></pre>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day02/07-namespaces"><code>implementations/day02/07-namespaces/</code></a></p>
+<pre><code>unit: s (impl v3)</code></pre>
+<p>Why <code>enum class</code> instead of the older plain <code>enum</code>? Two safety wins. First, the enumerators are <strong>scoped</strong>: they stay inside the enum and you name them <code>Unit::seconds</code>, so a <code>Color::green</code> and a <code>Fruit::green</code> can coexist. A plain <code>enum</code> does the opposite — it drops its enumerator names into the surrounding scope, where they collide with everything else. After <code>enum Color { red, green };</code> the name <code>green</code> is taken, and nobody who includes your header can use it for something of their own. Second, a plain enumerator <strong>turns itself into an <code>int</code></strong>, with no warning: hand <code>red</code> to a function that expects an <code>int</code> and it quietly arrives as <code>0</code>. A scoped enumerator refuses. If you want the number you write <code>static_cast&lt;int&gt;(Unit::seconds)</code> and say so out loud.</p>
+<p>You may read elsewhere that plain enums also let you compare two unrelated enums, as in <code>red == apple</code>. That was true for a long time, but C++20 deprecated comparison and arithmetic between two different enumeration types, so GCC and Clang now report it — and with <code>-Werror</code> the build fails. It is the two wins above that still do the work.</p>
+<p>An <code>enum class</code> is still stored as an integer, and unless you say otherwise that integer is <code>int</code> — whose size can differ between platforms. Inside your own code that doesn't matter. The moment the value is written to a file or sent over a network, §2.1's rule comes back: state the exact width.</p>
+<pre><code class="language-cpp">enum class Unit : std::uint8_t { millis, seconds, minutes };  // exactly 1 byte, everywhere</code></pre>
+<p>A scoped enum also gives you something useful in a header: you can <em>declare</em> it without listing its values, the way you can declare a function before you define it. This works whether or not you pinned the width, because a scoped enum always has a known underlying type — <code>int</code> when you say nothing:</p>
+<pre><code class="language-cpp">// metrics/types.h — the real definition, with no pinned width
+namespace metrics {
+    enum class Unit { millis, seconds, minutes };
+}
+
+// metrics/report.h — needs the name of the type, not its values
+namespace metrics {
+    enum class Unit;      // compiles: a Unit is int-sized, so the compiler knows enough
+    std::string format(double value, Unit u);
+}</code></pre>
+<p>A reader of <code>report.h</code> learns that a <code>Unit</code> exists and that <code>format</code> takes one, and never sees the list of units. A plain <code>enum Unit;</code> would not compile at all, because the compiler has no idea what size to give it; you would have to write <code>enum Unit : int;</code> and name the type by hand.</p>
+<p>One catch to remember: the declaration and the definition must agree on the width. If <code>types.h</code> pins the type with <code>enum class Unit : std::uint8_t { … }</code>, then <code>report.h</code> has to repeat it — <code>enum class Unit : std::uint8_t;</code>. A bare <code>enum class Unit;</code> would mean <code>int</code>, and GCC stops with <em>"different underlying type"</em>. Day 19 uses this technique when it works out what a public header should show and what it should keep back.</p>
+<div class="callout do">
+  <span class="label">Do</span>
+  Put everything your library exports inside one top-level namespace (Day 19 formalizes this), use a nested <code>detail</code> namespace for internals, and reach for <code>enum class</code> — never plain <code>enum</code> — for new code.
+</div>
+<div class="callout cg">
+  <span class="label">Core Guidelines</span>
+  <span class="rule"><a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#rs-namespace">SF.20: Use <code>namespace</code>s to express logical structure</a> · <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#renum-class">Enum.3: Prefer class enums over "plain" enums</a></span>
+  <p>SF.20 in plain words: a namespace is a labeled drawer. Everything that belongs to your library goes in your drawer, so it can't get mixed up with anyone else's socks. Enum.3 in plain words: a plain <code>enum</code> puts its names into the surrounding scope, and its values behave like integers on their own. An <code>enum class</code> keeps its names inside the type, and its values behave like integers only when you convert them yourself:</p>
+<pre><code class="language-cpp">void dim(int level);                // takes a brightness, 0-255
+
+enum Color { red, green };          // BAD: 'red' and 'green' escape into the outer scope
+// int green = 5;                   //   error: the name 'green' belongs to Color now
+// dim(red);                        //   compiles silently: to the compiler, red is just 0
+
+enum class Shade { light, dark };   // GOOD: the names stay inside Shade
+int dark = 5;                       //   no clash: the enumerator is Shade::dark
+// dim(Shade::dark);                //   compile ERROR: a Shade is not a number
+// dim(static_cast&lt;int&gt;(Shade::dark));   //   fine — you asked for the number out loud</code></pre>
+</div>
+
+<h3>Workshop</h3>
+
+<h4>Q&amp;A</h4>
+<dl class="qa">
+  <dt>Q: Is <code>auto</code> slower than writing the type?</dt>
+  <dd>A: No. <code>auto</code> is resolved entirely at compile time; the generated machine code is identical. It affects readability, never performance.</dd>
+  <dt>Q: If <code>const</code> is so good, why isn't it the default in the language?</dt>
+  <dd>A: History — C++ inherited C's mutable-by-default variables and can't break decades of existing code. So professionals invert the default by habit: write <code>const</code> first, remove it only when the compiler proves you must.</dd>
+  <dt>Q: When do I pass by value vs <code>const&amp;</code>?</dt>
+  <dd>A: Small, cheap types (<code>int</code>, <code>double</code>, <code>bool</code>, enums, small structs): by value. Anything that owns memory (<code>std::string</code>, containers, user types): <code>const&amp;</code>. Day 4 adds one refinement for "I need my own copy anyway" cases.</dd>
+  <dt>Q: How is a reference different from a pointer?</dt>
+  <dd>A: A reference cannot be null, cannot be re-seated, and needs no <code>*</code> to use — it's a safer, stricter tool. Pointers (Day 4) remain for the cases references can't express: optional ("maybe nothing") and re-seatable relationships.</dd>
+</dl>
+
+<h4>Quiz</h4>
+<ol>
+  <li>Why does <code>int x{7.9};</code> fail to compile while <code>int x = 7.9;</code> compiles?</li>
+  <li>What type does <code>auto s = "text";</code> deduce?</li>
+  <li>A function needs read-only access to a <code>std::string</code>. Write its ideal parameter declaration.</li>
+  <li>Name two safety advantages of <code>enum class</code> over plain <code>enum</code>.</li>
+  <li>What is wrong with <code>std::uint32_t i = 3; while (i &gt;= 0) { ...; --i; }</code>?</li>
+</ol>
+<details><summary>Quiz Answers</summary>
+<ol>
+  <li>Brace initialization forbids narrowing conversions; <code>7.9</code> → <code>int</code> loses the fraction, so braces reject it. <code>=</code> permits the silent truncation to 7.</li>
+  <li><code>const char*</code> — a pointer to the characters of a string literal, not a <code>std::string</code>.</li>
+  <li><code>void f(const std::string&amp; s)</code> — no copy, and the signature promises not to modify.</li>
+  <li>The enumerators are scoped, so they stay inside the enum instead of leaking into the surrounding scope and taking names other code wants — you write <code>Unit::seconds</code>. And there is no implicit conversion to <code>int</code>, so an enumerator can't quietly be used as a number; when you want the number you write <code>static_cast&lt;int&gt;(...)</code>.</li>
+  <li><code>i</code> is unsigned, so <code>i &gt;= 0</code> is always true: when <code>i</code> is 0, <code>--i</code> wraps to 4,294,967,295 and the loop never ends.</li>
+</ol>
+</details>
+
+<h4>Exercises</h4>
+<ol>
+  <li><strong>Narrowing audit.</strong> Predict which of these compile, then verify:
+<pre><code class="language-cpp">int    a{3.0};
+double b{3};
+char   c{300};
+long long d{2'000'000'000};</code></pre></li>
+  <li><strong>const sweep.</strong> Rewrite this function adding <code>const</code> (and <code>const&amp;</code>) everywhere legally possible:
+<pre><code class="language-cpp">double scale_sum(std::vector&lt;double&gt; xs, double factor) {
+    double total = 0;
+    for (double x : xs) total += x;
+    double scaled = total * factor;
+    return scaled;
+}</code></pre></li>
+  <li><strong>Swap via references.</strong> Write <code>void swap_ints(int&amp; a, int&amp; b)</code> without the standard library, and demonstrate in <code>main</code> that the callers' variables really swap.</li>
+  <li><strong>Traffic light.</strong> Define <code>enum class Light { red, amber, green };</code> in a namespace <code>traffic</code>, plus a function <code>Light next(Light)</code> returning the following state (red→green→amber→red). Print one full cycle.</li>
+</ol>
+<details><summary>Exercise Solutions</summary>
+<ol>
+  <li><code>a</code>: <strong>error</strong> — even <code>3.0</code> (representable!) is a narrowing double→int conversion by type, and braces reject it. <code>b</code>: OK — int→double is not narrowing. <code>c</code>: <strong>error</strong> — 300 doesn't fit in a (typically 8-bit) <code>char</code>. <code>d</code>: OK — fits comfortably in <code>long long</code>.</li>
+  <li><pre><code class="language-cpp">double scale_sum(const std::vector&lt;double&gt;&amp; xs, const double factor) {
+    double total = 0;                       // must mutate → stays non-const
+    for (const double x : xs) total += x;
+    const double scaled = total * factor;
+    return scaled;
+}</code></pre>
+The big win is <code>const&amp;</code> on <code>xs</code>: no vector copy per call. (<code>const</code> on the by-value <code>factor</code> is optional style; it documents intent inside the function.)</li>
+  <li><span class="filename">swap_ints.cpp</span>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+
+void swap_ints(int&amp; a, int&amp; b) {
+    const int tmp = a;
+    a = b;
+    b = tmp;
+}
+
+int main() {
+    int x{1}, y{2};
+    swap_ints(x, y);
+    std::cout &lt;&lt; x &lt;&lt; " " &lt;&lt; y &lt;&lt; "\n";   // 2 1
+}</code></pre>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day02/08-swap-ints"><code>implementations/day02/08-swap-ints/</code></a></p>
+Because the parameters are references, <code>a</code> and <code>b</code> <em>are</em> <code>x</code> and <code>y</code>; the swap is visible to the caller. (In real code, use <code>std::swap</code>.)</li>
+  <li><span class="filename">traffic_light.cpp</span>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+namespace traffic {
+    enum class Light { red, amber, green };
+
+    Light next(Light l) {
+        switch (l) {
+            case Light::red:   return Light::green;
+            case Light::green: return Light::amber;
+            case Light::amber: return Light::red;
+        }
+        return Light::red;
+    }
+
+    std::string to_string(Light l) {
+        switch (l) {
+            case Light::red:   return "red";
+            case Light::amber: return "amber";
+            case Light::green: return "green";
+        }
+        return "?";
+    }
+}
+
+int main() {
+    auto l = traffic::Light::red;
+    for (int i = 0; i &lt; 4; ++i) {
+        std::cout &lt;&lt; traffic::to_string(l) &lt;&lt; "\n";
+        l = traffic::next(l);
+    }
+}</code></pre>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day02/09-traffic-light"><code>implementations/day02/09-traffic-light/</code></a></p>
+Output: <code>red green amber red</code> (one per line).</li>
+</ol>
+</details>
+
+<h4>Today's Project: <code>statline</code> — Latency Statistics</h4>
+<p>A tool that takes latency samples (milliseconds) on the command line and prints min, max, and mean — the kind of utility you'd actually write while debugging a service. It exercises everything from today: <code>const</code> by default, <code>const&amp;</code> parameters, <code>auto</code>, brace init, fixed-width types, a namespace, and an <code>enum class</code>.</p>
+<pre><code>statline/
+├── CMakeLists.txt
+└── src/
+    └── main.cpp</code></pre>
+<span class="filename">CMakeLists.txt</span>
+<pre><code class="language-cmake">cmake_minimum_required(VERSION 3.25)
+project(statline VERSION 0.1.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+add_executable(statline src/main.cpp)
+target_compile_options(statline PRIVATE
+  $&lt;$&lt;CXX_COMPILER_ID:MSVC&gt;:/W4;/WX&gt;
+  $&lt;$&lt;NOT:$&lt;CXX_COMPILER_ID:MSVC&gt;&gt;:-Wall;-Wextra;-Werror&gt;
+)</code></pre>
+<span class="filename">src/main.cpp</span>
+<pre><code class="language-cpp">// statline — min/max/mean of latency samples given in milliseconds.
+// Usage: statline 12.5 9.8 15.2 11.1
+#include &lt;cstdint&gt;
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+namespace statline {
+
+enum class Verdict { fast, acceptable, slow };
+
+struct Stats {
+    double        min{};
+    double        max{};
+    double        mean{};
+    std::uint32_t count{};
+};
+
+// const&amp;: read a possibly large vector without copying it.
+Stats compute(const std::vector&lt;double&gt;&amp; samples) {
+    Stats s{};
+    s.count = static_cast&lt;std::uint32_t&gt;(samples.size());
+    if (samples.empty()) return s;
+
+    s.min = samples.front();
+    s.max = samples.front();
+    double sum = 0.0;
+    for (const double v : samples) {
+        if (v &lt; s.min) s.min = v;
+        if (v &gt; s.max) s.max = v;
+        sum += v;
+    }
+    s.mean = sum / static_cast&lt;double&gt;(s.count);
+    return s;
+}
+
+Verdict judge(const double mean_ms) {
+    if (mean_ms &lt; 10.0)  return Verdict::fast;
+    if (mean_ms &lt; 50.0)  return Verdict::acceptable;
+    return Verdict::slow;
+}
+
+std::string to_string(const Verdict v) {
+    switch (v) {
+        case Verdict::fast:       return "fast";
+        case Verdict::acceptable: return "acceptable";
+        case Verdict::slow:       return "slow";
+    }
+    return "?";
+}
+
+} // namespace statline
+
+int main(int argc, char* argv[]) {
+    if (argc &lt; 2) {
+        std::cerr &lt;&lt; "usage: statline &lt;ms&gt; [&lt;ms&gt; ...]\n";
+        return 1;
+    }
+
+    std::vector&lt;double&gt; samples;
+    for (int i = 1; i &lt; argc; ++i) {
+        try {
+            samples.push_back(std::stod(argv[i]));   // string → double
+        } catch (const std::exception&amp;) {
+            std::cerr &lt;&lt; "error: '" &lt;&lt; argv[i] &lt;&lt; "' is not a number\n";
+            return 1;
+        }
+    }
+
+    const auto stats = statline::compute(samples);
+    std::cout &lt;&lt; "samples: " &lt;&lt; stats.count
+              &lt;&lt; "  min: "  &lt;&lt; stats.min
+              &lt;&lt; "  max: "  &lt;&lt; stats.max
+              &lt;&lt; "  mean: " &lt;&lt; stats.mean &lt;&lt; " ms  ("
+              &lt;&lt; statline::to_string(statline::judge(stats.mean)) &lt;&lt; ")\n";
+}</code></pre>
+<p class="srcref">In the repo: <a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days/tree/main/implementations/day02/10-statline"><code>implementations/day02/10-statline/</code></a></p>
+<pre><code class="language-bash">cmake -S . -B build &amp;&amp; cmake --build build
+./build/statline 12.5 9.8 15.2 11.1</code></pre>
+<p>Expected output:</p>
+<pre><code>samples: 4  min: 9.8  max: 15.2  mean: 12.15 ms  (acceptable)</code></pre>
+<p><strong>Stretch goals:</strong> reject negative samples with a clear error; add a <code>median</code> field to <code>Stats</code> (hint: you'll want <code>std::sort</code> from Day 1's glimpse); step through <code>compute</code> in the VSCode debugger and watch <code>s.min</code>/<code>s.max</code> update.</p>
+
+<h4>References for Today</h4>
+<ul>
+  <li>cppreference — fundamental types: <a href="https://en.cppreference.com/w/cpp/language/types">https://en.cppreference.com/w/cpp/language/types</a> · fixed-width integers: <a href="https://en.cppreference.com/w/cpp/types/integer">https://en.cppreference.com/w/cpp/types/integer</a></li>
+  <li>cppreference — list (brace) initialization: <a href="https://en.cppreference.com/w/cpp/language/list_initialization">https://en.cppreference.com/w/cpp/language/list_initialization</a> · <code>auto</code>: <a href="https://en.cppreference.com/w/cpp/language/auto">https://en.cppreference.com/w/cpp/language/auto</a></li>
+  <li>cppreference — references: <a href="https://en.cppreference.com/w/cpp/language/reference">https://en.cppreference.com/w/cpp/language/reference</a> · <code>enum class</code>: <a href="https://en.cppreference.com/w/cpp/language/enum">https://en.cppreference.com/w/cpp/language/enum</a></li>
+  <li>C++ Core Guidelines (Stroustrup &amp; Sutter, eds.) — especially ES.20 "Always initialize an object", ES.25 "Declare an object <code>const</code> or <code>constexpr</code> unless you want to modify its value later on", and Enum.3 "Prefer class enums over &ldquo;plain&rdquo; enums": <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines">https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines</a></li>
+</ul>
+
+<div class="callout">
+  <span class="label">Coming Up on Day 3</span>
+  Functions in depth: overloading, default arguments, lambdas — the little anonymous functions that power the STL — and your first real taste of <code>constexpr</code> functions.
+</div>
+</section>
+<nav class="page-nav"><a href="01-toolchain.html">← Day 1</a><a href="index.html">Contents</a><div class="spacer"></div><a href="under-construction.html">Day 3 →</a></nav>
+<footer>
+  <p>Modern C++ in 21 Days · Prose © 2026 Vahid Moslemi, CC BY 4.0 · Code samples MIT licensed · Days 4–21 are appended as they are written.<br><a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days">Source &amp; issues on GitHub</a> · <a href="https://www.linkedin.com/in/vahid-moslemi/">LinkedIn</a></p>
+</footer>
+</main>
+</body>
+</html>

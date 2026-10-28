@@ -86,6 +86,8 @@ pre code{background:none; padding:0; color:inherit; font-size:1em}
   letter-spacing:.18em; text-transform:uppercase; opacity:.85; display:block; margin-bottom:.3rem;
 }
 .day-banner h2{border:none; color:#fff; margin:0; padding:0; font-size:1.7rem}
+/* inline code inside the teal banner: the default pale code background makes white text unreadable */
+.day-banner code{background:rgba(255,255,255,.18); color:inherit}
 .callout{border-left:4px solid var(--accent); background:var(--note-bg);
   padding:.8rem 1.1rem; margin:1.2rem 0; border-radius:0 6px 6px 0}
 .callout .label{
@@ -183,7 +185,7 @@ footer{border-top:2px solid var(--rule); margin-top:4rem; padding-top:1.2rem;
 <p style="font-size:.9rem;color:#5b6570">Front matter: <a href="copyright.html">Copyright &amp; License</a> · <a href="preface.html">Preface</a> · <a href="how-to-use.html">How to Use This Book</a> · <a href="prerequisites.html">Prerequisites</a> · <a href="about-the-author.html">About the Author</a></p>
 <ol>
   <li><a href="01-toolchain.html">Your Professional Toolchain — Compilers, VSCode, and CMake</a></li>
-  <li><a href="under-construction.html">Modern Core Fundamentals — Types, <code>auto</code>, <code>const</code>, References, Initialization</a></li>
+  <li><a href="02-core-fundamentals.html">Modern Core Fundamentals — Types, <code>auto</code>, <code>const</code>, References, Initialization</a></li>
   <li><a href="under-construction.html">Functions, Overloading, Lambdas, and a First Taste of <code>constexpr</code></a></li>
   <li><a href="under-construction.html">Memory and Ownership — RAII, Smart Pointers, Move Semantics</a></li>
   <li><a href="under-construction.html">Classes and Value Semantics — The Rule of Zero/Three/Five</a></li>

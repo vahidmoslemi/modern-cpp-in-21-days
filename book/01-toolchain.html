@@ -74,6 +74,8 @@ pre code{background:none; padding:0; color:inherit; font-size:1em}
   letter-spacing:.18em; text-transform:uppercase; opacity:.85; display:block; margin-bottom:.3rem;
 }
 .day-banner h2{border:none; color:#fff; margin:0; padding:0; font-size:1.7rem}
+/* inline code inside the teal banner: the default pale code background makes white text unreadable */
+.day-banner code{background:rgba(255,255,255,.18); color:inherit}
 .callout{border-left:4px solid var(--accent); background:var(--note-bg);
   padding:.8rem 1.1rem; margin:1.2rem 0; border-radius:0 6px 6px 0}
 .callout .label{
@@ -192,7 +194,7 @@ footer{border-top:2px solid var(--rule); margin-top:4rem; padding-top:1.2rem;
 <tr><th>Compiler</th><th>Home platform</th><th>Command</th><th>Notes</th></tr>
 <tr><td>GCC</td><td>Linux (everywhere, really)</td><td><code>g++</code></td><td>The GNU compiler; default on most Linux distributions.</td></tr>
 <tr><td>Clang</td><td>macOS (via Apple), Linux, Windows</td><td><code>clang++</code></td><td>Famous for clear error messages; powers Apple's Xcode tools.</td></tr>
-<tr><td>MSVC</td><td>Windows</td><td><code>cl</code></td><td>Microsoft's compiler, installed with Visual Studio Build Tools.</td></tr>
+<tr><td>MSVC</td><td>Windows</td><td><code>cl</code></td><td>Microsoft's compiler, installed with Visual Studio Build Tools. Also written <em>Visual C++</em> or <em>MSVC++</em>.</td></tr>
 </table>
 <p>They implement the same ISO standards but at slightly different paces, and a few flags differ (for example, GCC/Clang use <code>-std=c++23</code>, while MSVC has no <code>/std:c++23</code> switch yet and you ask for the same thing with <code>/std:c++latest</code>). This book flags the differences whenever they bite. This book compiles everything at C++23, so prefer the newest compiler you can get: GCC 13+, Clang 17+ (on macOS that means Apple clang 16, which ships with Xcode 16), or MSVC from Visual Studio 2022 17.13+ handle everything in these pages. None of the three implements every C++23 feature yet, and they finish at different times — when you need to know whether your compiler has a specific feature, check the <a href="https://en.cppreference.com/w/cpp/compiler_support">compiler support table</a> linked again at the end of today.</p>
 
@@ -323,7 +325,7 @@ void print(const std::string&amp; s);</code></pre>
 </div>
 
 <h3>1.6 Enter CMake — Building Like a Professional</h3>
-<p>Hand-compiling works for one file. Real projects have hundreds of files, libraries, tests, and three platforms to support. <strong>CMake</strong> is the de-facto standard tool for describing <em>what</em> to build; it then generates the platform-native build system (Makefiles, Ninja files, or Visual Studio projects) that does the building. One <code>CMakeLists.txt</code>, every platform.</p>
+<p>Hand-compiling works for one file. Real projects have hundreds of files, libraries, tests, and three platforms to support. <strong>CMake</strong> is the de-facto standard tool for describing <em>what</em> to build; it then generates the platform-native build system (Makefiles, Ninja files, or Visual Studio projects) that does the building. That is why you will hear it called a <em>build-system generator</em>, or a <em>meta build system</em>: CMake itself never compiles anything. One <code>CMakeLists.txt</code>, every platform.</p>
 <p>Recreate the hello project the CMake way. Folder layout:</p>
 <pre><code>day01-cmake/
 ├── CMakeLists.txt
@@ -366,7 +368,7 @@ cmake --build build        # compile + link
 <pre><code>Built with CMake on every platform.</code></pre>
 <div class="callout">
   <span class="label">Note</span>
-  The <code>build/</code> directory holds everything generated. This is an <em>out-of-source build</em>: your sources stay pristine, and cleaning up means deleting one folder. Add <code>build/</code> to your <code>.gitignore</code> from day one.
+  The <code>build/</code> directory holds everything generated. This is an <em>out-of-source build</em> — some tools, Qt Creator among them, call the same thing a <em>shadow build</em>. Your sources stay pristine, and cleaning up means deleting one folder. Add <code>build/</code> to your <code>.gitignore</code> from day one.
 </div>
 <div class="callout pitfall">
   <span class="label">Common Pitfall</span>
@@ -473,7 +475,7 @@ int main() {
 Bjarne (6)
 Grace (5)
 Ada (3)</code></pre>
-<p>Same library, same result, half the machinery. The sorting rule now sits <em>inside</em> the call that uses it, so you read what the sort does and why in one place. <code>auto</code> and the range-based <code>for</code> retire the iterator boilerplate, and brace initialization fills the vector in one line instead of four. Your code states <em>intent</em> — "sort by this rule" — where the older version spent its lines on mechanics. Add a fifth name and the rest of the program needs no edit. That gap between the two listings is the theme of the next twenty days.</p>
+<p>Same library, same result, half the machinery. The sorting rule now sits <em>inside</em> the call that uses it, so you read what the sort does and why in one place. <code>auto</code> and the range-based <code>for</code> — often shortened to <em>range-for</em>, and called a <em>for-each loop</em> in other languages — retire the iterator boilerplate, and brace initialization fills the vector in one line instead of four. Your code states <em>intent</em> — "sort by this rule" — where the older version spent its lines on mechanics. Add a fifth name and the rest of the program needs no edit. That gap between the two listings is the theme of the next twenty days.</p>
 
 <h3>Workshop</h3>
 
@@ -609,7 +611,7 @@ int main(int argc, char* argv[]) {
   With a working toolchain, we start on the language itself: modern types, <code>auto</code>, <code>const</code>-correctness, references, and brace initialization — the fundamentals that make everything after them safer.
 </div>
 </section>
-<nav class="page-nav"><a href="about-the-author.html">← About the Author</a><a href="index.html">Contents</a><div class="spacer"></div><a href="under-construction.html">Day 2 →</a></nav>
+<nav class="page-nav"><a href="about-the-author.html">← About the Author</a><a href="index.html">Contents</a><div class="spacer"></div><a href="02-core-fundamentals.html">Day 2 →</a></nav>
 <footer>
   <p>Modern C++ in 21 Days · Prose © 2026 Vahid Moslemi, CC BY 4.0 · Code samples MIT licensed · Days 4–21 are appended as they are written.<br><a href="https://github.com/vahidmoslemi/modern-cpp-in-21-days">Source &amp; issues on GitHub</a> · <a href="https://www.linkedin.com/in/vahid-moslemi/">LinkedIn</a></p>
 </footer>
